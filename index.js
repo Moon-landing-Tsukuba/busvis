@@ -1,42 +1,49 @@
 
-function Bus() { // クラスの定義
+function Bus(id) { // クラスの定義
     var me = this; // インスタンス自身への参照を定義
-    var name = "ななしさん"; // インスタンス変数（private）
+    this.id = id;
+    this.size = 30;
     this.latitude = 36.105030;  //緯度 lat
     this.longitude = 140.101137; //経度 lng
-    this.velocity = 30; //時速 v
-    this.age = 0; // インスタンス変数（public)
-    this.setName = function(_name) {
-        name = _name; // private変数を外部から修正する
-    };
-    this.speak = function() { // メソッドの定義
-        if (me.age < 2) { // publicインスタンス変数への参照
-            alert("「」");
-        } else {
-            alert("「私の名前は" + name + "、" + me.age + "歳です。」"); // privateインスタンス変数への参照
-        }
-    };
+    this.draw = function(ctx, x, y) {
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.fillStyle = "#ff3";
+        ctx.strokeStyle = "#000";
+        ctx.moveTo(x-me.size/2, y-me.size/2);
+        ctx.lineTo(x+me.size/2, y-me.size/2);
+        ctx.lineTo(x+me.size/2, y+me.size/2);
+        ctx.lineTo(x-me.size/2, y+me.size/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    };    
 }
-function Stop() { // クラスの定義
+var names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","第一エリア前","筑波大学中央"]
+var positions = [[50,490],[50,457],[50,423],[50,390],[50,100],[250,120]];
+
+function Stop(id) { // クラスの定義
     var me = this; // インスタンス自身への参照を定義
-    var name = "ななしさん"; // インスタンス変数（private）
+    var name = names[id]; // インスタンス変数（private）
+    var [x, y] = positions[id];
+    this.id = id;
+    this.size = 10;
     this.latitude = 36.110431;  //緯度 lat
     this.longitude = 140.099017; //経度 lng
-    this.age = 0; // インスタンス変数（public)
-    this.setName = function(_name) {
-        name = _name; // private変数を外部から修正する
-    };
-    this.speak = function() { // メソッドの定義
-        if (me.age < 2) { // publicインスタンス変数への参照
-            alert("「」");
-        } else {
-            alert("「私の名前は" + name + "、" + me.age + "歳です。」"); // privateインスタンス変数への参照
-        }
+    this.draw = function(ctx) {
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.fillStyle = "#3f3";
+        ctx.strokeStyle = "#000";
+        ctx.moveTo(x+me.size, y);
+        ctx.arc(x, y, me.size, 0, 2*Math.PI, true);
+        ctx.fill();
+        ctx.stroke();
     };
 }
 
 var bus = new Bus();
-var stop = new Stop();
+var stop = new Stop(2);
 
 function calc_distance(bus, stop) {
     var busX = bus.latitude;
@@ -50,19 +57,13 @@ function calc_distance(bus, stop) {
 }
 
 var dist = calc_distance(bus, stop);
+
 // document.getElementById("testdis").textContent = dist;
 
 function calc_time(bus, dist) {
     var delta =90163.2924;
 
 }
-
-// var cvs = document.createElement("canvas");
-// cvs.width = 500;
-// cvs.height = 250;
-// document.getElementById("container").appendChild(cvs);
-// var ctx = cvs.getContext("2d");
-
 
 var timetable = [1633,1700, 1701, 1702, 1703, 1820];  
 
@@ -118,3 +119,83 @@ function load_now(){
 //document.getElementById("arrival").textContent = "テスト"
 // document.getElementById("helloworld").textContent = arrival_min + "分" + arrival_sec + "秒";
 document.getElementById("arrival").textContent = arrival_min + "分" + arrival_sec + "秒";
+
+
+var cvs = document.createElement("canvas");
+cvs.width = 500;
+cvs.height = 500;
+document.getElementById("container").appendChild(cvs);
+var ctx = cvs.getContext("2d");
+
+var num_bus = 2;
+var num_stop = 6;
+var timetable_start = [1630, 1640, 1650, 1700, 1710, 1720]; //中央
+var timetable_end = [1635, 1645, 1655, 1705, 1715, 1725]; //第一
+
+function cals_pos(i) {
+    var now = load_now();
+    var targets_start = []; //次のバスが来る時刻
+    timetable_end.forEach(function(element){
+        element = element*100;
+        if(element>now){
+            targets_end.push(element);
+        }        
+    });
+    var target_end = targets_end[i];
+    var targets_start = [];
+    var i = 0;
+    timetable_start.forEach(function(element){
+        element = element*100;
+        if(element>target_end){
+            targets.push(element);
+            i++;
+        }   
+    });
+    var target_start = timetable_start[i-1];
+}
+
+function render() {
+
+    ctx.clearRect(0, 0, 500, 500);
+
+    //map
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "#000";
+    ctx.beginPath();
+    ctx.moveTo(50, 490);
+    ctx.lineTo(50, 90);
+    //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
+    //開始角は3時の方角で時計回り
+    ctx.arc(100, 90, 50, Math.PI, 3*Math.PI/2, false);
+    ctx.lineTo(200, 40);
+    ctx.arc(200, 90, 50, 3*Math.PI/2, 0, false);
+    ctx.lineTo(250, 340);
+    ctx.arc(200, 340, 50, 0, Math.PI/2, false);
+    ctx.lineTo(50, 390);
+    ctx.stroke();
+
+    for (var i=0; i<num_stop; i++){
+        var bstop = new Stop(i);
+        bstop.draw(ctx);
+    }
+    
+    for (var i=0; i < num_bus; i++){
+        var bus = new Bus(i);
+        var [x, y] = calc_pos(i);
+        bus.draw(ctx, x, y);
+    }
+
+  
+    for (var i = 0; i < numCircles; i++) {
+        var circle = circles[i];
+  
+        circle.x += circle.vx;
+        circle.y += circle.vy;
+  
+
+        //円を描画
+        circle.draw(ctx);
+    }
+ }
+  
+ setInterval(render, 30);
