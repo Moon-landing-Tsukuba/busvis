@@ -143,15 +143,13 @@ function cals_pos(i) {
     });
     var target_end = targets_end[i];
     var targets_start = [];
-    var i = 0;
     timetable_start.forEach(function(element){
         element = element*100;
         if(element>target_end){
             targets.push(element);
-            i++;
         }   
     });
-    var target_start = timetable_start[i-1];
+    var target_start = timetable_star
 }
 
 function render() {
