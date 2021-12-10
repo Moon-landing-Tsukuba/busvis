@@ -129,7 +129,7 @@ var num_stop = 28;
 var timetable_start = [1630, 1640, 1650, 1700, 1710, 1720]; //中央
 var timetable_end = [1635, 1645, 1655, 1705, 1715, 1725]; //第一
 var names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前"]
-// var positions = [[50,490],[50,457],[50,423],[50,390],[50,100],[250,120]];
+// var positions = [];
 var positions = [];
 for (var i=0; i<25; i++) {
     var pos = [0, 0]
@@ -148,25 +148,46 @@ for (var i=0; i<25; i++) {
     }
     positions.push(pos);
 }
+var num_stop = 6;
+var now_time =1730; //<--現時刻の5分前にするといい感じになる。気がする。
+var timetable_start = [now_time-5, now_time-3, now_time-1, now_time+1, now_time+3, now_time+5]; //中央
+var timetable_end = [now_time-3,now_time-1,now_time+1, now_time+3, now_time+5, now_time+7]; //第一
+// var timetable_end2 = [now_time-3,now_time-1,/*now_time+1, now_time+3, now_time+5, now_time+7*/]; //第一
 
-function calc_pos(i) {
-    // var now = load_now();
-    // var targets_start = []; //次のバスが来る時刻
-    // timetable_end.forEach(function(element){
-    //     element = element*100;
-    //     if(element>now){
-    //         targets_end.push(element);
-    //     }        
-    // });
-    // var target_end = targets_end[i];
-    // var targets_start = [];
-    // timetable_start.forEach(function(element){
-    //     element = element*100;
-    //     if(element>target_end){
-    //         targets.push(element);
-    //     }   
-    // });
-    // var target_start = timetable_star
+function calc_pos(i,) {
+    var now = load_now()
+    ; //ここでは秒変換されていない。ex)163033
+    var targets_end = []; //次のバスが来る時刻
+    timetable_end.forEach(function(element){
+        element = element*100;
+        if(element>now){
+            targets_end.push(element);
+        }        
+    });
+    var target_end = targets_end[0];
+    var target_start;
+    timetable_start.forEach(function(element){
+        element = element*100;
+        if(element<target_end){
+            target_start = element;
+        }   
+    });
+    console.log("target_start");
+    console.log(target_start);
+    console.log("target_end");
+    console.log(target_end);
+    var time = target_end-now;
+    document.getElementById("nowtime").textContent = time + "秒";
+    
+    var total_time = target_end-target_start;
+    var propotion = (now-target_start)/total_time;
+    var start_x = 50;
+    var end_x = 50;
+    var start_y = 390;
+    var end_y = 100;
+    var x=start_x+(end_x-start_x)*propotion;
+    var y=start_y+(end_y-start_y)*propotion;
+    return [x,y];
 }
 
 function render() {
@@ -190,10 +211,12 @@ function render() {
     ctx.lineTo(w/2-h/5, 3*h/5+h/10);
     ctx.stroke();
 
+    //バスインスタンスの生成
     for (var i=0; i<num_stop; i++){
         var bstop = new Stop(i);
         bstop.draw(ctx);
     }
+    
     
     for (var i=0; i < num_bus; i++){
         var bus = new Bus(i);
