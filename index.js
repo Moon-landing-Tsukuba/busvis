@@ -129,12 +129,14 @@ var ctx = cvs.getContext("2d");
 
 var num_bus = 2;
 var num_stop = 6;
-var now_time =1639;
+var now_time =1730; //<--現時刻の5分前にするといい感じになる。気がする。
 var timetable_start = [now_time-5, now_time-3, now_time-1, now_time+1, now_time+3, now_time+5]; //中央
 var timetable_end = [now_time-3,now_time-1,now_time+1, now_time+3, now_time+5, now_time+7]; //第一
+// var timetable_end2 = [now_time-3,now_time-1,/*now_time+1, now_time+3, now_time+5, now_time+7*/]; //第一
 
-function calc_pos(i) {
-    var now = load_now(); //ここでは秒変換されていない。ex)163033
+function calc_pos(i,) {
+    var now = load_now()
+    ; //ここでは秒変換されていない。ex)163033
     var targets_end = []; //次のバスが来る時刻
     timetable_end.forEach(function(element){
         element = element*100;
@@ -154,6 +156,8 @@ function calc_pos(i) {
     console.log(target_start);
     console.log("target_end");
     console.log(target_end);
+    var time = target_end-now;
+    document.getElementById("nowtime").textContent = time + "秒";
     
     var total_time = target_end-target_start;
     var propotion = (now-target_start)/total_time;
