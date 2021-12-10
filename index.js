@@ -129,27 +129,45 @@ var ctx = cvs.getContext("2d");
 
 var num_bus = 2;
 var num_stop = 6;
-var timetable_start = [1630, 1640, 1650, 1700, 1710, 1720]; //中央
-var timetable_end = [1635, 1645, 1655, 1705, 1715, 1725]; //第一
+var now_time =1730; //<--現時刻の5分前にするといい感じになる。気がする。
+var timetable_start = [now_time-5, now_time-3, now_time-1, now_time+1, now_time+3, now_time+5]; //中央
+var timetable_end = [now_time-3,now_time-1,now_time+1, now_time+3, now_time+5, now_time+7]; //第一
+// var timetable_end2 = [now_time-3,now_time-1,/*now_time+1, now_time+3, now_time+5, now_time+7*/]; //第一
 
-function cals_pos(i) {
-    var now = load_now();
-    var targets_start = []; //次のバスが来る時刻
+function calc_pos(i,) {
+    var now = load_now()
+    ; //ここでは秒変換されていない。ex)163033
+    var targets_end = []; //次のバスが来る時刻
     timetable_end.forEach(function(element){
         element = element*100;
         if(element>now){
             targets_end.push(element);
         }        
     });
-    var target_end = targets_end[i];
-    var targets_start = [];
+    var target_end = targets_end[0];
+    var target_start;
     timetable_start.forEach(function(element){
         element = element*100;
-        if(element>target_end){
-            targets.push(element);
+        if(element<target_end){
+            target_start = element;
         }   
     });
-    var target_start = timetable_star
+    console.log("target_start");
+    console.log(target_start);
+    console.log("target_end");
+    console.log(target_end);
+    var time = target_end-now;
+    document.getElementById("nowtime").textContent = time + "秒";
+    
+    var total_time = target_end-target_start;
+    var propotion = (now-target_start)/total_time;
+    var start_x = 50;
+    var end_x = 50;
+    var start_y = 390;
+    var end_y = 100;
+    var x=start_x+(end_x-start_x)*propotion;
+    var y=start_y+(end_y-start_y)*propotion;
+    return [x,y];
 }
 
 function render() {
@@ -172,10 +190,12 @@ function render() {
     ctx.lineTo(50, 390);
     ctx.stroke();
 
+    //バスインスタンスの生成
     for (var i=0; i<num_stop; i++){
         var bstop = new Stop(i);
         bstop.draw(ctx);
     }
+    
     
     for (var i=0; i < num_bus; i++){
         var bus = new Bus(i);
@@ -183,7 +203,7 @@ function render() {
         bus.draw(ctx, x, y);
     }
 
-  
+    /*
     for (var i = 0; i < numCircles; i++) {
         var circle = circles[i];
   
@@ -194,6 +214,7 @@ function render() {
         //円を描画
         circle.draw(ctx);
     }
+    */
  }
   
  setInterval(render, 30);
