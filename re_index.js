@@ -223,3 +223,19 @@ function render() {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
 }
+
+/*-------------------------------------------
+*実行パート
+-------------------------------------------*/
+
+// check_table();
+// create_buses(administrator.target_table);
+// calc_bus_param(administrator.buses);
+// calc_pos(administrator.buses);
+
+console.log(administrator);
+
+render();
+
+setInterval(render, 30);
+
