@@ -1,137 +1,314 @@
+/*-------------------------------------------
+*変数定義パート
+*bus_stop_num : バス停の数
+*bus_stop_names : 各バス停の名前
+*bus_stop_positions : バス停の位置情報を格納
+*timetable : バスの時刻表(仮)
+*stops : バス停インスタンス <-- render部分で毎回新たに生み出すのが無駄であるため
+*ctx : Canvasの描画部
+-------------------------------------------*/
 
-function Bus(id) { // クラスの定義
-    var me = this; // インスタンス自身への参照を定義
-    this.id = id;
-    this.size = 30;
-    this.latitude = 36.105030;  //緯度 lat
-    this.longitude = 140.101137; //経度 lng
-    this.draw = function(ctx, x, y) {
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.fillStyle = "#ff3";
-        ctx.strokeStyle = "#000";
-        ctx.moveTo(x-me.size/2, y-me.size/2);
-        ctx.lineTo(x+me.size/2, y-me.size/2);
-        ctx.lineTo(x+me.size/2, y+me.size/2);
-        ctx.lineTo(x-me.size/2, y+me.size/2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-    };    
+const w = 500;
+const h = 500;
+
+const bus_stop_num = 25;
+
+const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
+
+const bus_stop_positions = make_position();
+
+// const timetable = [
+//   [2300, 3300, 3500, 4400, 4600, 10400],
+//   [10300, 10500, 10520, 10540, 10600, 10620],
+//   [11100, 11100, 11100, 11100, 11100, 12200],
+//   [84000, 84100, 84200, 90700, 90800, 91500],
+//   [85500, 85900, 90200, 91700, 91800, 92500],
+//   [105000, 105100, 105200, 111700, 111800, 112500],
+// ];
+const timetable = [];
+
+let stops = [];
+for(i=0; i<bus_stop_num; i++){
+    const stop = new Stop(i);
+    stops.push(stop);
 }
-
-function Stop(id) { // クラスの定義
-    var me = this; // インスタンス自身への参照を定義
-    var name = names[id]; // インスタンス変数（private）
-    var [x, y] = positions[id];
-    this.id = id;
-    this.size = 10;
-    this.latitude = 36.110431;  //緯度 lat
-    this.longitude = 140.099017; //経度 lng
-    this.draw = function(ctx) {
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.fillStyle = "#3f3";
-        ctx.strokeStyle = "#000";
-        ctx.moveTo(x+me.size, y);
-        ctx.arc(x, y, me.size, 0, 2*Math.PI, true);
-        ctx.fill();
-        ctx.stroke();
-    };
-}
-
-function calc_distance(bus, stop) {
-    var busX = bus.latitude;
-    var busY = bus.longitude;
-    var stopX = stop.latitude;
-    var stopY = stop.longitude;
-    var deltaX=110959.0097;
-    var deltaY=90163.2924;
-    
-    return Math.sqrt((deltaX*(busX-stopX))**2 + deltaY*((busY - stopY))**2);
-}
-
-// var dist = calc_distance(bus, stop);
-
-// document.getElementById("testdis").textContent = dist;
-
-function calc_time(bus, dist) {
-    var delta =90163.2924;
-
-}
-
-var timetable = [1633,1700, 1701, 1702, 1703, 1820];  
-
-
-//現在の時刻から次のバスが到着するまでの時間を計算
-function detect_arrival(timetable){
-    var now = load_now(); //現在時刻
-
-    var target = 0; //次のバスが来る時刻
-    timetable.some(function(element, index){
-        console.log(element);
-        element = element*100;
-        if(element>now){
-            target = element;
-            console.log('target');
-            console.log(target);
-            return true;
-        }        
-    });
-    
-    var now_hour = Math.floor(now/10000);
-    var now_min = Math.floor(now/100) - now_hour*100;
-    var now_sec = now - now_hour*10000 - now_min*100;
-    var tgt_hour = Math.floor(target/10000);
-    var tgt_min = Math.floor(target/100) - tgt_hour*100;
-    var tgt_sec = target - tgt_hour*10000 - tgt_min*100;
-    var now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
-
-    var tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
-    
-    var arrival = tgt_time - now_time;
-    console.log('tgt_time');
-    console.log(tgt_time);
-    console.log('now_time');
-    console.log(now_time);
-    var arrival_min = Math.floor(arrival/60);
-    var arrival_sec = arrival - arrival_min*60;
-    return [arrival_min, arrival_sec];
-}
-
-var [arrival_min,arrival_sec] = detect_arrival(timetable); //次のバスが到着するまでの時間
-console.log(arrival_min);
-console.log(arrival_sec);
-function load_now(){
-    var now = new Date();
-    var hour = now.getHours();
-    var min = now.getMinutes();
-    var sec = now.getSeconds();
-    var time = hour*10000+min*100+sec;  //秒の仕様を後で確認する。
-    return time;
-}
-// document.getElementById("arrival").textContent = arrival_min + "分" + arrival_sec + "秒"; 
-//document.getElementById("arrival").textContent = "テスト"
-// document.getElementById("helloworld").textContent = arrival_min + "分" + arrival_sec + "秒";
-document.getElementById("arrival").textContent = arrival_min + "分" + arrival_sec + "秒";
-
 
 var cvs = document.createElement("canvas");
-var w = 500;
-var h = 500;
+cvs.style.backgroundColor = "rgba(2,2,2,0.2)";
 cvs.width = w;
 cvs.height = h;
 document.getElementById("container").appendChild(cvs);
 var ctx = cvs.getContext("2d");
 
-var num_bus = 2;
-var num_stop = 28;
-var timetable_start = [1630, 1640, 1650, 1700, 1710, 1720]; //中央
-var timetable_end = [1635, 1645, 1655, 1705, 1715, 1725]; //第一
-var names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前"]
-// var positions = [];
-var positions = [];
-for (var i=0; i<25; i++) {
+
+/*-------------------------------------------
+*オブジェクト定義パート
+*Bus :
+*Stop : 
+*Admin : 
+-------------------------------------------*/
+
+function Bus(id) {
+  this.id = id;
+  this.timetable = [];
+  this.start_stop = 0;
+  this.end_stop = 0;
+  this.start_time = 0;
+  this.end_time = 0;
+  this.remaining_time = 0;
+  this.position_x = 0;
+  this.position_y = 0;
+  this.size = 30;
+
+  this.draw = function(ctx, x, y) {
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.fillStyle = "#ff3";
+      ctx.strokeStyle = "#000";
+      ctx.moveTo(x-this.size/2, y-this.size/2);
+      ctx.lineTo(x+this.size/2, y-this.size/2);
+      ctx.lineTo(x+this.size/2, y+this.size/2);
+      ctx.lineTo(x-this.size/2, y+this.size/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+  };    
+}
+
+function Stop(id) {
+  var [x, y] = bus_stop_positions[id];
+  this.id = id;
+  this.size = 10;
+  this.draw = function(ctx) {
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.fillStyle = "#3f3";
+      ctx.strokeStyle = "#000";
+      ctx.moveTo(x+this.size, y);
+      ctx.arc(x, y, this.size, 0, 2*Math.PI, true);
+      ctx.fill();
+      ctx.stroke();
+  };
+}
+
+const administrator = {
+  direction : true, //右回りならTrue
+  user_station : 3, //バス停の識別IDが入る
+  target_table :[],
+  buses : [],
+};
+
+
+/*------------------------------------------
+*関数定義パート
+*load_now : 現在時刻を表示 | 返り値例 : 183010
+*check_table : 現在時刻から運行しているバスのtimetableを取得(複数個ある可能性あり)＆administratorに代入
+*create_buses : chek_tableで取得したtimetableをもとに運行しているバスのインスタンスを作成
+*calc_bus_param : 運行中のバス情報をインスタンスに反映させる
+*calc_pos : administratorの中の各バスがどこに居るかを計算
+*render : 描画関数
+------------------------------------------*/
+function load_now(){
+  var now = new Date();
+  var hour = now.getHours();
+  var min = now.getMinutes();
+  var sec = now.getSeconds();
+  var time = hour*10000+min*100+sec;  //秒の仕様を後で確認する。
+  return time;
+}
+
+function check_table(){
+  let now = load_now();
+  // console.log(now);
+  // const now = 142300; //実際はload_now()関数を使う <--だからtimetableも秒まで書かないとダメだ。
+  const table = [];
+  for (i=0; i<timetable.length; i++){
+    if(timetable[i][0] <= now && now <= timetable[i][27]){
+      table.push(timetable[i]);
+    }
+  }
+  administrator.target_table = table;
+}
+
+function create_buses(tm){
+  const buses = [];
+  tm.forEach(function(value, index){
+    const bus = new Bus(index);
+    bus.timetable = value;
+    buses.push(bus);
+  });
+  administrator.buses = buses;
+}
+
+function calc_bus_param(admin_bus) {
+  let now = load_now(); //ここでは秒変換されていない。ex)163033
+  // var now = 142300; // <--8時58分00秒を表す。
+  
+  
+  admin_bus.forEach(function(value, index){
+    
+    const target_ends = [];
+    value.timetable.forEach(function(element){
+      element = element;
+      if(element>now){
+        target_ends.push(element);
+      }        
+    });
+    const target_end = target_ends[0];
+
+    let target_start = 0;
+    value.timetable.forEach(function(element){
+        element = element;
+        if(element<target_end){
+            target_start = element;
+        }   
+    });
+
+    let start_stop = 0;
+    value.timetable.some(function(time, index){
+      if(target_start == time){
+          start_stop = index;
+          return true;
+      }
+    });
+
+    let end_stop = 0;
+    value.timetable.some(function(time, index){
+        if(target_end == time){
+            end_stop = index;
+            return true;
+        }
+    });
+
+    value.start_stop = start_stop;
+    value.end_stop = end_stop;
+    value.start_time = target_start;
+    value.end_time = target_end;
+  });
+}
+
+function calc_pos(admin_bus){
+  let now = load_now();
+  // const now = 142300
+  admin_bus.forEach(function(bus, index){
+    const total_time = bus.end_time - bus.start_time;
+    const propotion = (now - bus.start_time) / total_time;
+    const start_stop = bus_stop_positions[bus.start_stop];
+    const end_stop = bus_stop_positions[bus.end_stop];
+    // console.log(bus.start_stop);
+    const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
+    const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
+    bus.position_x = x;
+    bus.position_y = y;
+  });
+}
+
+function render() {
+  ctx.clearRect(0, 0, 500, 500);
+  
+  //map
+  var r = h/10
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#000";
+  ctx.beginPath();
+  ctx.moveTo(w/2-h/5, 9*h/10);
+  ctx.lineTo(w/2-h/5, h/5);
+  //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
+  //開始角は3時の方角で時計回り
+  // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
+  ctx.lineTo(w/2-h/5+r, h/10);
+  ctx.lineTo(w/2+h/10, h/10);
+  // ctx.arc(w/2+h/10, h/10+r, r, 3*Math.PI/2, 0, false);
+  ctx.lineTo(w/2+h/5, h/10+r);
+  ctx.lineTo(w/2+h/5, 3*h/5);
+  // ctx.arc(w/2+h/5-r, 3*h/5, r, 0, Math.PI/2, false);
+  ctx.lineTo(w/2+h/5-r, 3*h/5+r);
+  ctx.lineTo(w/2-h/5, 3*h/5+r);
+  ctx.stroke();
+
+  //停留所インスタンスの生成
+  for (var i=0; i<bus_stop_num; i++){
+      stops[i].draw(ctx);
+  }
+
+  check_table();
+  create_buses(administrator.target_table);
+  calc_bus_param(administrator.buses);
+  calc_pos(administrator.buses);
+
+  administrator.buses.forEach(function(bus, index){
+    bus.draw(ctx, bus.position_x, bus.position_y);
+  });
+}
+
+function zfill(NUM, LEN){
+	return ( Array(LEN).join('0') + NUM ).slice( -LEN );
+}
+
+function make_timetable() {
+  const timetable = [];
+  var interval_rightlot = [0, 30, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 30, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60];
+  var interval_leftlot = interval_rightlot.slice().reverse();
+  var interval_rightlot_acc = [];
+  var interval_leftlot_acc = [];
+  var sum = 0;
+  for (var i=0; i<interval_rightlot.length; i++){
+      sum += interval_rightlot[i];
+      interval_rightlot_acc.push(sum);
+  }
+  var sum = 0;
+  for (var i=0; i<interval_leftlot.length; i++){
+      sum += interval_leftlot[i];
+      interval_leftlot_acc.push(sum);
+  }
+  // console.log(interval_rightlot_acc);
+  var timetable_rightlot = [];
+  var timetable_leftlot = [];
+  for (var i=0; i<interval_rightlot.length; i++) {
+      var timetable_rightlot_stop = []
+      plus = interval_rightlot_acc[i];
+      for (var houri=9; houri<21; houri++) {
+          for (var mini=0; mini<60; mini+=20) {
+              time = houri*60*60 + mini*60 + plus;
+              var hour = Math.floor(time/3600);
+              hour = zfill(hour, 2)
+              var min = Math.floor((time - hour*3600)/60);
+              min = zfill(min, 2)
+              var sec = time - hour*3600 - min*60;
+              sec = zfill(sec, 2)
+              timetable_rightlot_stop.push(Number("" + hour + min + sec));
+          }
+      }
+      // console.log(timetable_rightlot_stop)
+      timetable_rightlot.push(timetable_rightlot_stop);
+      
+  }
+  // console.log(timetable_rightlot)
+  for (var i=0; i<interval_leftlot.length; i++) {
+      var timetable_leftlot_stop = []
+      plus = interval_leftlot_acc[i];
+      for (var houri=9; houri<21; houri++) {
+          for (var mini=0; mini<60; mini+=20) {
+              time = houri*60*60 + mini*60 + plus;
+              var hour = Math.floor(time/3600);
+              hour = zfill(hour, 2)
+              var min = Math.floor((time - hour*3600)/60);
+              min = zfill(min, 2)
+              var sec = time - hour*3600 - min*60;
+              sec = zfill(sec, 2)
+              timetable_leftlot_stop.push(Number("" + hour + min + sec));
+          }
+      }
+      timetable_leftlot.push(timetable_leftlot_stop);
+  }
+  timetable.push(timetable_rightlot);
+  timetable.push(timetable_leftlot);
+
+  return timetable;
+}
+function make_position(){
+  const positions = [];
+  for (var i=0; i<25; i++) {
     var pos = [0, 0]
     if (i < 11) {
         pos[0] = w/2 - h/5
@@ -147,146 +324,35 @@ for (var i=0; i<25; i++) {
         pos[1] = 7*h/10
     }
     positions.push(pos);
-}
-var num_stop = 6;
-var now_time =1730; //<--現時刻の5分前にするといい感じになる。気がする。
-var timetable_start = [now_time-5, now_time-3, now_time-1, now_time+1, now_time+3, now_time+5]; //中央
-var timetable_end = [now_time-3,now_time-1,now_time+1, now_time+3, now_time+5, now_time+7]; //第一
-// var timetable_end2 = [now_time-3,now_time-1,/*now_time+1, now_time+3, now_time+5, now_time+7*/]; //第一
-
-function calc_pos(i,) {
-    var now = load_now()
-    ; //ここでは秒変換されていない。ex)163033
-    var targets_end = []; //次のバスが来る時刻
-    timetable_end.forEach(function(element){
-        element = element*100;
-        if(element>now){
-            targets_end.push(element);
-        }        
-    });
-    var target_end = targets_end[0];
-    var target_start;
-    timetable_start.forEach(function(element){
-        element = element*100;
-        if(element<target_end){
-            target_start = element;
-        }   
-    });
-    console.log("target_start");
-    console.log(target_start);
-    console.log("target_end");
-    console.log(target_end);
-    var time = target_end-now;
-    document.getElementById("nowtime").textContent = time + "秒";
-    
-    var total_time = target_end-target_start;
-    var propotion = (now-target_start)/total_time;
-    var start_x = 50;
-    var end_x = 50;
-    var start_y = 390;
-    var end_y = 100;
-    var x=start_x+(end_x-start_x)*propotion;
-    var y=start_y+(end_y-start_y)*propotion;
-    return [x,y];
+  }
+  positions.push(positions[3]);
+  positions.push(positions[2]);
+  positions.push(positions[1]);
+  positions.push(positions[0]);
+  return positions;
 }
 
-function render() {
+const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
 
-    ctx.clearRect(0, 0, 500, 500);
+/*-------------------------------------------
+*実行パート
+-------------------------------------------*/
 
-    var r = h/10
-    //map
-    ctx.lineWidth = 10;
-    ctx.strokeStyle = "#000";
-    ctx.beginPath();
-    ctx.moveTo(w/2-h/5, 9*h/10);
-    ctx.lineTo(w/2-h/5, h/5);
-    //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
-    //開始角は3時の方角で時計回り
-    ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
-    ctx.lineTo(w/2+h/10, h/10);
-    ctx.arc(w/2+h/10, h/10+r, r, 3*Math.PI/2, 0, false);
-    ctx.lineTo(w/2+h/5, 3*h/5);
-    ctx.arc(w/2+h/5-r, 3*h/5, r, 0, Math.PI/2, false);
-    ctx.lineTo(w/2-h/5, 3*h/5+h/10);
-    ctx.stroke();
+check_table();
+create_buses(administrator.target_table);
+calc_bus_param(administrator.buses);
+calc_pos(administrator.buses);
 
-    //停留所インスタンスの生成
-    for (var i=0; i<num_stop; i++){
-        var bstop = new Stop(i);
-        bstop.draw(ctx);
-    }
-    
-    
-    for (var i=0; i < num_bus; i++){
-        var bus = new Bus(i);
-        // var [x, y] = calc_pos(i);
-        var x = 0;
-        var y = 0;
-        bus.draw(ctx, x, y);
-    }
+console.log(administrator);
+
+var timetable_both = make_timetable();
+var timetable_rightlot = transpose(timetable_both[0]);
+var timetable_leftlot = transpose(timetable_both[1])
+for (var i=0; i<timetable_rightlot.length; i++) {
+    timetable.push(timetable_rightlot[i]);
 }
-  
+
+render();
+
 setInterval(render, 30);
 
-function zfill(NUM, LEN){
-	return ( Array(LEN).join('0') + NUM ).slice( -LEN );
-}
-
-function make_timetable() {
-    var interval_rightlot = [0, 30, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 30, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60];
-    var interval_leftlot = interval_rightlot.slice().reverse();
-    var interval_rightlot_acc = [];
-    var interval_leftlot_acc = [];
-    var sum = 0;
-    for (var i=0; i<interval_rightlot.length; i++){
-        sum += interval_rightlot[i];
-        interval_rightlot_acc.push(sum);
-    }
-    var sum = 0;
-    for (var i=0; i<interval_leftlot.length; i++){
-        sum += interval_leftlot[i];
-        interval_leftlot_acc.push(sum);
-    }
-    // console.log(interval_rightlot_acc);
-    var timetable_rightlot = [];
-    var timetable_leftlot = [];
-    for (var i=0; i<interval_rightlot.length; i++) {
-        var timetable_rightlot_stop = []
-        plus = interval_rightlot_acc[i];
-        for (var houri=9; houri<21; houri++) {
-            for (var mini=0; mini<60; mini+=20) {
-                time = houri*60*60 + mini*60 + plus;
-                var hour = Math.floor(time/3600);
-                hour = zfill(hour, 2)
-                var min = Math.floor((time - hour*3600)/60);
-                min = zfill(min, 2)
-                var sec = time - hour*3600 - min*60;
-                sec = zfill(sec, 2)
-                timetable_rightlot_stop.push("" + hour + min + sec);
-            }
-        }
-        // console.log(timetable_rightlot_stop)
-        timetable_rightlot.push(timetable_rightlot_stop);
-    }
-    // console.log(timetable_rightlot)
-    for (var i=0; i<interval_leftlot.length; i++) {
-        var timetable_leftlot_stop = []
-        plus = interval_leftlot_acc[i];
-        for (var houri=9; houri<21; houri++) {
-            for (var mini=0; mini<60; mini+=20) {
-                time = houri*60*60 + mini*60 + plus;
-                var hour = Math.floor(time/3600);
-                hour = zfill(hour, 2)
-                var min = Math.floor((time - hour*3600)/60);
-                min = zfill(min, 2)
-                var sec = time - hour*3600 - min*60;
-                sec = zfill(sec, 2)
-                timetable_leftlot_stop.push("" + hour + min + sec);
-            }
-        }
-        timetable_leftlot.push(timetable_leftlot_stop);
-    }
-}
-
-make_timetable();
