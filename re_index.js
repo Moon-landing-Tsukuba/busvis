@@ -93,3 +93,133 @@ const administrator = {
   buses : [],
 };
 
+
+/*------------------------------------------
+*関数定義パート
+*load_now : 現在時刻を表示 | 返り値例 : 183010
+*check_table : 現在時刻から運行しているバスのtimetableを取得(複数個ある可能性あり)＆administratorに代入
+*create_buses : chek_tableで取得したtimetableをもとに運行しているバスのインスタンスを作成
+*calc_bus_param : 運行中のバス情報をインスタンスに反映させる
+*calc_pos : administratorの中の各バスがどこに居るかを計算
+*render : 描画関数
+------------------------------------------*/
+function load_now(){
+  var now = new Date();
+  var hour = now.getHours();
+  var min = now.getMinutes();
+  var sec = now.getSeconds();
+  var time = hour*10000+min*100+sec;  //秒の仕様を後で確認する。
+  return time;
+}
+
+function check_table(){
+  let now = load_now();
+  // console.log(now);
+  // const now = 858; //実際はload_now()関数を使う <--だからtimetableも秒まで書かないとダメだ。
+  const table = [];
+  for (i=0; i<timetable.length; i++){
+    if(timetable[i][0] <= now && now <= timetable[i][5]){
+      table.push(timetable[i]);
+    }
+  }
+  administrator.target_table = table;
+}
+
+function create_buses(tm){
+  const buses = [];
+  tm.forEach(function(value, index){
+    const bus = new Bus(index);
+    bus.timetable = value;
+    buses.push(bus);
+  });
+  administrator.buses = buses;
+}
+
+function calc_bus_param(admin_bus) {
+  let now = load_now(); //ここでは秒変換されていない。ex)163033
+  // var now = 85800; // <--8時58分00秒を表す。
+  
+  
+  admin_bus.forEach(function(value, index){
+    
+    const target_ends = [];
+    value.timetable.forEach(function(element){
+      element = element;
+      if(element>now){
+        target_ends.push(element);
+      }        
+    });
+    const target_end = target_ends[0];
+
+    let target_start = 0;
+    value.timetable.forEach(function(element){
+        element = element;
+        if(element<target_end){
+            target_start = element;
+        }   
+    });
+
+    let start_stop = 0;
+    value.timetable.some(function(time, index){
+      if(target_start == time){
+          start_stop = index;
+          return true;
+      }
+    });
+
+    let end_stop = 0;
+    value.timetable.some(function(time, index){
+        if(target_end == time){
+            end_stop = index;
+            return true;
+        }
+    });
+
+    value.start_stop = start_stop;
+    value.end_stop = end_stop;
+    value.start_time = target_start;
+    value.end_time = target_end;
+  });
+
+
+}
+
+function calc_pos(admin_bus){
+  let now = load_now();
+  // const now = 85800
+  admin_bus.forEach(function(bus, index){
+    const total_time = bus.end_time - bus.start_time;
+    const propotion = (now - bus.start_time) / total_time;
+    const start_stop = bus_stop_positions[bus.start_stop];
+    const end_stop = bus_stop_positions[bus.end_stop];
+    const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
+    const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
+    bus.position_x = x;
+    bus.position_y = y;
+  });
+}
+
+function render() {
+  ctx.clearRect(0, 0, 500, 500);
+  //map
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#000";
+  ctx.beginPath();
+  ctx.moveTo(50, 100);
+  ctx.lineTo(650, 100);
+  ctx.stroke();
+
+  //停留所インスタンスの生成
+  for (var i=0; i<bus_stop_num; i++){
+      stops[i].draw(ctx);
+  }
+
+  check_table();
+  create_buses(administrator.target_table);
+  calc_bus_param(administrator.buses);
+  calc_pos(administrator.buses);
+
+  administrator.buses.forEach(function(bus, index){
+    bus.draw(ctx, bus.position_x, bus.position_y);
+  });
+}
