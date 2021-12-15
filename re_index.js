@@ -34,3 +34,62 @@ cvs.width = 700;
 cvs.height = 200;
 document.getElementById("container").appendChild(cvs);
 var ctx = cvs.getContext("2d");
+
+
+/*-------------------------------------------
+*オブジェクト定義パート
+*Bus :
+*Stop : 
+*Admin : 
+-------------------------------------------*/
+
+function Bus(id) {
+  this.id = id;
+  this.timetable = [];
+  this.start_stop = 0;
+  this.end_stop = 0;
+  this.start_time = 0;
+  this.end_time = 0;
+  this.remaining_time = 0;
+  this.position_x = 0;
+  this.position_y = 0;
+  this.size = 30;
+
+  this.draw = function(ctx, x, y) {
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.fillStyle = "#ff3";
+      ctx.strokeStyle = "#000";
+      ctx.moveTo(x-this.size/2, y-this.size/2);
+      ctx.lineTo(x+this.size/2, y-this.size/2);
+      ctx.lineTo(x+this.size/2, y+this.size/2);
+      ctx.lineTo(x-this.size/2, y+this.size/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+  };    
+}
+
+function Stop(id) {
+  var [x, y] = bus_stop_positions[id];
+  this.id = id;
+  this.size = 10;
+  this.draw = function(ctx) {
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.fillStyle = "#3f3";
+      ctx.strokeStyle = "#000";
+      ctx.moveTo(x+this.size, y);
+      ctx.arc(x, y, this.size, 0, 2*Math.PI, true);
+      ctx.fill();
+      ctx.stroke();
+  };
+}
+
+const administrator = {
+  direction : true, //右回りならTrue
+  user_station : 3, //バス停の識別IDが入る
+  target_table :[],
+  buses : [],
+};
+
