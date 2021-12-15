@@ -211,7 +211,7 @@ function render() {
     ctx.lineTo(w/2-h/5, 3*h/5+h/10);
     ctx.stroke();
 
-    //バスインスタンスの生成
+    //停留所インスタンスの生成
     for (var i=0; i<num_stop; i++){
         var bstop = new Stop(i);
         bstop.draw(ctx);
