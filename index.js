@@ -190,7 +190,7 @@ function render() {
     ctx.lineTo(50, 390);
     ctx.stroke();
 
-    //バスインスタンスの生成
+    //停留所インスタンスの生成
     for (var i=0; i<num_stop; i++){
         var bstop = new Stop(i);
         bstop.draw(ctx);
