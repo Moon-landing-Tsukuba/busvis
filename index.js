@@ -93,7 +93,7 @@ function Stop(id) {
 
 const administrator = {
   direction : true, //右回りならTrue
-  user_station : 3, //バス停の識別IDが入る
+  user_station : 20, //バス停の識別IDが入る
   target_table :[],
   buses : [],
 };
@@ -203,6 +203,73 @@ function calc_pos(admin_bus){
   });
 }
 
+//現在の時刻から次のバスが到着するまでの時間を計算
+function detect_arrival(timetable){
+  var now = load_now(); //現在時刻
+
+  var target = 0; //次のバスが来る時刻
+  timetable.some(function(element, index){
+      console.log(element);
+      element = element*100;
+      if(element>now){
+          target = element;
+          console.log('target');
+          console.log(target);
+          return true;
+      }        
+  });
+  
+  var now_hour = Math.floor(now/10000);
+  var now_min = Math.floor(now/100) - now_hour*100;
+  var now_sec = now - now_hour*10000 - now_min*100;
+  var tgt_hour = Math.floor(target/10000);
+  var tgt_min = Math.floor(target/100) - tgt_hour*100;
+  var tgt_sec = target - tgt_hour*10000 - tgt_min*100;
+  var now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
+
+  var tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
+  
+  var arrival = tgt_time - now_time;
+
+  var arrival_min = Math.floor(arrival/60);
+  var arrival_sec = arrival - arrival_min*60;
+  return [arrival_min, arrival_sec];
+}
+
+/*
+const administrator = {
+  direction : true, //右回りならTrue
+  user_station : 20, //バス停の識別IDが入る
+  target_table :[],
+  buses : [],
+};
+*/
+
+function calc_remaining_time(adm){
+  const now = load_now();
+  const userStation = adm.user_station;
+  const buses = adm.buses;
+  buses.forEach(function(bus, index){
+    const arrivalTime = bus.timetable[userStation];
+    const now_hour = Math.floor(now/10000);
+    const now_min = Math.floor(now/100) - now_hour*100;
+    const now_sec = now - now_hour*10000 - now_min*100;
+    const tgt_hour = Math.floor(arrivalTime/10000);
+    const tgt_min = Math.floor(arrivalTime/100) - tgt_hour*100;
+    const tgt_sec = arrivalTime - tgt_hour*10000 - tgt_min*100;
+    const now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
+
+    const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
+    
+    const arrival = tgt_time - now_time;
+
+    const arrival_min = Math.floor(arrival/60);
+    const arrival_sec = arrival - arrival_min*60;
+
+    console.log(arrival_min + "分" + arrival_sec + "秒");
+  });
+}
+
 function render() {
   ctx.clearRect(0, 0, 500, 500);
   
@@ -235,6 +302,8 @@ function render() {
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
   calc_pos(administrator.buses);
+  calc_remaining_time(administrator)
+
 
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
@@ -342,8 +411,9 @@ check_table();
 create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
 calc_pos(administrator.buses);
-
 console.log(administrator);
+
+calc_remaining_time(administrator)
 
 var timetable_both = make_timetable();
 var timetable_rightlot = transpose(timetable_both[0]);
