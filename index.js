@@ -376,8 +376,8 @@ function render() {
 
   
   ctx.fillStyle= "black";
-  ctx.font = "italic bold 24pt sans-serif";
-  ctx.fillText(administrator.buses[0].remaining_time, 190, 210);
+  ctx.font = "italic bold 80pt sans-serif";
+  ctx.fillText(administrator.buses[0].remaining_time, 1300, 1300);
 
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
