@@ -8,8 +8,8 @@
 *ctx : Canvasの描画部
 -------------------------------------------*/
 
-const w = 500;
-const h = 500;
+const w = 3000;
+const h = 3000;
 
 const bus_stop_num = 25;
 
@@ -40,6 +40,8 @@ cvs.height = h;
 document.getElementById("container").appendChild(cvs);
 var ctx = cvs.getContext("2d");
 
+var img_left = document.createElement("img");
+var img_right = document.createElement("img");
 
 /*-------------------------------------------
 *オブジェクト定義パート
@@ -58,10 +60,10 @@ function Bus(id) {
   this.remaining_time = 0;
   this.position_x = 0;
   this.position_y = 0;
-  this.size = 30;
+  this.size = w/50*3;
 
   this.draw = function(ctx, x, y) {
-      ctx.lineWidth = 2;
+      ctx.lineWidth = w/250;
       ctx.beginPath();
       ctx.fillStyle = "#ff3";
       ctx.strokeStyle = "#000";
@@ -78,13 +80,13 @@ function Bus(id) {
 function Stop(id) {
   var me = this;
   var [x, y] = bus_stop_positions[id];
-  me.id = id;
-  me.size = 10;
+  this.id = id;
+  this.size = w/50;
 
-  me.is_clicked = false;
+  this.is_clicked = false;
 
-  me.draw = function(ctx) {
-      ctx.lineWidth = 2;
+  this.draw = function(ctx) {
+      ctx.lineWidth = w/250;
       ctx.beginPath();
       if (administrator.user_station === id){
         ctx.fillStyle = "red";
@@ -111,12 +113,53 @@ function Stop(id) {
 }
 
 const administrator = {
-  direction : true, //右回りならTrue
+  direction : false, //右回りならTrue
   user_station : 3, //バス停の識別IDが入る
   target_table :[],
   buses : [],
 };
 
+function Image(){
+  const sizeof_img = 200;
+
+  var me = this;
+  this.x_left = w/2-w/8-sizeof_img/2;
+  this.y_left = 0;
+  this.x_right = w/2+w/8-sizeof_img/2;
+  this.y_right = 0;
+  this.is_clicked_left = false;
+  this.is_clicked_right = false;
+  this.h = 175;
+  this.w = 200;
+
+  this.draw = function(){
+    img_left.addEventListener("load", draw_img_left, false);
+    img_right.addEventListener("load", draw_img_right, false);
+    if (administrator.direction === true){ //migi
+      img_left.src = "gray_migihidari-02.png";
+      img_right.src = "migihidari-01.png";
+    }else{
+      img_left.src = "migihidari-02.png";
+      img_right.src = "gray_migihidari-01.png";
+    }
+  }
+  window.addEventListener("mousedown", function(e) {
+    // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
+    me.is_clicked_left = me.x_left < e.layerX && e.layerX < me.x_left + me.w && me.y_left < e.layerY && e.layerY < me.y_left + me.h;
+    me.is_clicked_right = me.x_right < e.layerX && e.layerX < me.x_right + me.w && me.y_right < e.layerY && e.layerY < me.y_right + me.h;
+    // console.log(me.is_clicked);
+    if (me.is_clicked_left) {
+      administrator.direction = false;
+    } else if (me.is_clicked_right) {
+      administrator.direction = true;
+    }
+  });
+  window.addEventListener("mousedown", function(e) {
+    if (me.x < e.layerX && e.layerX < me.x + me.size && me.y < e.layerY && e.layerY < me.y + me.size) {
+        isDrag = true;
+    }
+  });
+}
 
 /*------------------------------------------
 *関数定義パート
@@ -224,11 +267,14 @@ function calc_pos(admin_bus){
 
 function render() {
   // console.log(administrator);
-  ctx.clearRect(0, 0, 500, 500);
+  ctx.clearRect(0, 175, w, h);
+  
+  var image = new Image();
+  image.draw();
   
   //map
   var r = h/10
-  ctx.lineWidth = 10;
+  ctx.lineWidth = w/50;
   ctx.strokeStyle = "#000";
   ctx.beginPath();
   ctx.moveTo(w/2-h/5, 9*h/10);
@@ -259,6 +305,8 @@ function render() {
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
+
+  
 }
 
 function zfill(NUM, LEN){
@@ -353,6 +401,32 @@ function make_position(){
 }
 
 const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
+
+function draw_img_left() {
+  const sizeof_img = 200;
+  ctx.drawImage(img_left, w/2-w/8-sizeof_img/2, 0);
+  var bmp = ctx.getImageData(0, 0, w, h);
+  for (var y = 0, i = 0; y < h; y++) {
+      for (var x = 0; x < w; x++, i += 4) {
+          var value = (bmp.data[i] + bmp.data[i + 1] + bmp.data[i + 2]) / 3;
+          bmp.data[i] = bmp.data[i + 1] = bmp.data[i + 2] = value;
+      }
+  }
+  ctx.putImageData(bmp, 0, 0);
+}
+
+function draw_img_right() {
+  const sizeof_img = 200;
+  ctx.drawImage(img_right, w/2+w/8-sizeof_img/2, 0);
+  var bmp = ctx.getImageData(0, 0, w, h);
+  for (var y = 0, i = 0; y < h; y++) {
+      for (var x = 0; x < w; x++, i += 4) {
+          var value = (bmp.data[i] + bmp.data[i + 1] + bmp.data[i + 2]) / 3;
+          bmp.data[i] = bmp.data[i + 1] = bmp.data[i + 2] = value;
+      }
+  }
+  ctx.putImageData(bmp, 0, 0);
+}
 
 /*-------------------------------------------
 *実行パート
