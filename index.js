@@ -281,11 +281,15 @@ function calc_remaining_time(adm){
     const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
     
     const arrival = tgt_time - now_time;
-
+    if(arrival < 0){
+      bus.remaining_time = "バス通過";
+      return;
+    }
     const arrival_min = Math.floor(arrival/60);
     const arrival_sec = arrival - arrival_min*60;
 
-    console.log(arrival_min + "分" + arrival_sec + "秒");
+    // console.log(arrival_min + "分" + arrival_sec + "秒");
+    bus.remaining_time = arrival_min + "分" + arrival_sec + "秒";
   });
 }
 
@@ -324,6 +328,10 @@ function render() {
   calc_pos(administrator.buses);
   calc_remaining_time(administrator)
 
+  
+  ctx.fillStyle= "black";
+  ctx.font = "italic bold 24pt sans-serif";
+  ctx.fillText(administrator.buses[0].remaining_time, 190, 210);
 
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
