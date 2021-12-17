@@ -76,19 +76,38 @@ function Bus(id) {
 }
 
 function Stop(id) {
+  var me = this;
   var [x, y] = bus_stop_positions[id];
-  this.id = id;
-  this.size = 10;
-  this.draw = function(ctx) {
+  me.id = id;
+  me.size = 10;
+
+  me.is_clicked = false;
+
+  me.draw = function(ctx) {
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.fillStyle = "#3f3";
+      if (administrator.user_station === id){
+        ctx.fillStyle = "red";
+      }else{
+        ctx.fillStyle = "#3f3";
+      }
       ctx.strokeStyle = "#000";
-      ctx.moveTo(x+this.size, y);
-      ctx.arc(x, y, this.size, 0, 2*Math.PI, true);
+      // console.log(me.size);
+      ctx.moveTo(x+me.size, y);
+      ctx.arc(x, y, me.size, 0, 2*Math.PI, true);
       ctx.fill();
       ctx.stroke();
   };
+  window.addEventListener("mousedown", function(e) {
+    var dx = x - e.layerX;
+    var dy = y - e.layerY;
+    // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
+    me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
+    // console.log(me.is_clicked);
+    if (me.is_clicked) {
+      administrator.user_station = id;
+    }
+  });
 }
 
 const administrator = {
@@ -204,6 +223,7 @@ function calc_pos(admin_bus){
 }
 
 function render() {
+  // console.log(administrator);
   ctx.clearRect(0, 0, 500, 500);
   
   //map
@@ -338,12 +358,12 @@ const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
 *実行パート
 -------------------------------------------*/
 
+console.log(administrator);
+
 check_table();
 create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
 calc_pos(administrator.buses);
-
-console.log(administrator);
 
 var timetable_both = make_timetable();
 var timetable_rightlot = transpose(timetable_both[0]);
