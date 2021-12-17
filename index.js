@@ -25,7 +25,7 @@ const bus_stop_positions = make_position();
 //   [85500, 85900, 90200, 91700, 91800, 92500],
 //   [105000, 105100, 105200, 111700, 111800, 112500],
 // ];
-const timetable = [];
+var timetable = [];
 
 let stops = [];
 for(i=0; i<bus_stop_num; i++){
@@ -383,6 +383,19 @@ function render() {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
 
+  var timetable_both = make_timetable();
+  var timetable_rightlot = transpose(timetable_both[0]);
+  var timetable_leftlot = transpose(timetable_both[1])
+  timetable = []
+  if (administrator.direction === true) {
+    for (var i=0; i<timetable_rightlot.length; i++) {
+      timetable.push(timetable_rightlot[i]);
+    }
+  } else {
+    for (var i=0; i<timetable_leftlot.length; i++) {
+      timetable.push(timetable_leftlot[i]);
+    }
+  }
   
 }
 
