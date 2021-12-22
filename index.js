@@ -14,8 +14,9 @@ const h = 3000;
 const bus_stop_num = 25;
 
 const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
+const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
-const bus_stop_positions = make_position();
+const bus_stop_positions = make_position(); //canvas上の位置
 
 // const timetable = [
 //   [2300, 3300, 3500, 4400, 4600, 10400],
@@ -524,6 +525,12 @@ function draw_img_right() {
   ctx.putImageData(bmp, 0, 0);
 }
 
+function displayData(lat, lng, accu) {
+  var txt = document.getElementById("gps");       // データを表示するdiv要素の取得
+  txt.innerHTML = "緯度, 経度: " + lat + ", " + lng + "<br>"  // データ表示
+                + "精度: "       + accu;
+}
+
 /*-------------------------------------------
 *実行パート
 -------------------------------------------*/
@@ -549,3 +556,12 @@ render();
 
 setInterval(render, 30);
 
+navigator.geolocation.watchPosition( (position) => {
+  var lat  = position.coords.latitude;            // 緯度を取得
+  var lng  = position.coords.longitude;           // 経度を取得
+  var accu = position.coords.accuracy;            // 緯度・経度の精度を取得
+  displayData(lat, lng, accu);                    // displayData 関数を実行
+}, (error) => {                                     // エラー処理（今回は特に何もしない）
+}, {
+  enableHighAccuracy: true                        // 高精度で測定するオプション
+});
