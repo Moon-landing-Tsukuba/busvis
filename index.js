@@ -249,14 +249,20 @@ function calc_bus_param(admin_bus) {
   });
 }
 
-function calc_pos(admin_bus){
+function calc_pos(admin){
+  var busstoppositions;
+  if(admin.direction=false){
+    busstoppositions = bus_stop_positions.slice().reverse();
+  }else{
+    busstoppositions = make_position();
+  } 
   let now = load_now();
   // const now = 142300
-  admin_bus.forEach(function(bus, index){
+  admin.buses.forEach(function(bus, index){
     const total_time = bus.end_time - bus.start_time;
     const propotion = (now - bus.start_time) / total_time;
-    const start_stop = bus_stop_positions[bus.start_stop];
-    const end_stop = bus_stop_positions[bus.end_stop];
+    const start_stop = busstoppositions[bus.start_stop];
+    const end_stop = busstoppositions[bus.end_stop];
     // console.log(bus.start_stop);
     const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
     const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
@@ -371,8 +377,8 @@ function render() {
   check_table();
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
-  calc_pos(administrator.buses);
-  calc_remaining_time(administrator)
+  calc_pos(administrator);
+  calc_remaining_time(administrator);
 
   
   ctx.fillStyle= "black";
@@ -527,7 +533,7 @@ console.log(administrator);
 check_table();
 create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
-calc_pos(administrator.buses);
+calc_pos(administrator);
 console.log(administrator);
 
 calc_remaining_time(administrator)
