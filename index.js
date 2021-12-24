@@ -17,7 +17,7 @@ const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大�
 const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
 const bus_stop_positions = make_position(); //canvas上の位置
-
+console.log(bus_stop_positions);
 // const timetable = [
 //   [2300, 3300, 3500, 4400, 4600, 10400],
 //   [10300, 10500, 10520, 10540, 10600, 10620],
@@ -252,10 +252,10 @@ function calc_bus_param(admin_bus) {
 
 function calc_pos(admin){
   var stoppos;
-  if(1){
-    stoppos = bus_stop_positions.slice().reverse();
-  }else{
+  if(admin.direction){
     stoppos = bus_stop_positions;
+  }else{
+    stoppos = bus_stop_positions.slice().reverse();
   } 
   let now = load_now();
   // const now = 142300
@@ -471,6 +471,7 @@ function make_timetable() {
 
   return timetable;
 }
+
 function make_position(){
   const positions = [];
   for (var i=0; i<25; i++) {
