@@ -17,7 +17,8 @@ const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大�
 const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
 const bus_stop_positions = make_position(); //canvas上の位置
-console.log(bus_stop_positions);
+
+
 // const timetable = [
 //   [2300, 3300, 3500, 4400, 4600, 10400],
 //   [10300, 10500, 10520, 10540, 10600, 10620],
@@ -133,17 +134,17 @@ function Image(){
   this.h = 175;
   this.w = 200;
 
-  this.draw = function(){
-    img_left.addEventListener("load", draw_img_left, false);
-    img_right.addEventListener("load", draw_img_right, false);
-    if (administrator.direction === true){ //migi
-      img_left.src = "gray_migihidari-02.png";
-      img_right.src = "migihidari-01.png";
-    }else{
-      img_left.src = "migihidari-02.png";
-      img_right.src = "gray_migihidari-01.png";
-    }
-  }
+  // this.draw = function(){
+  //   img_left.addEventListener("load", draw_img_left, false);
+  //   img_right.addEventListener("load", draw_img_right, false);
+  //   if (administrator.direction === true){ //migi
+  //     img_left.src = "gray_migihidari-02.png";
+  //     img_right.src = "migihidari-01.png";
+  //   }else{
+  //     img_left.src = "migihidari-02.png";
+  //     img_right.src = "gray_migihidari-01.png";
+  //   }
+  // }
   window.addEventListener("mousedown", function(e) {
     // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
     me.is_clicked_left = me.x_left < e.layerX && e.layerX < me.x_left + me.w && me.y_left < e.layerY && e.layerY < me.y_left + me.h;
@@ -347,8 +348,8 @@ function render() {
   // console.log(administrator);
   ctx.clearRect(0, 175, w, h);
   
-  var image = new Image();
-  image.draw();
+  //var image = new Image();
+  //image.draw();
   
   //map
   var r = h/10
@@ -547,11 +548,14 @@ console.log(administrator);
 calc_remaining_time(administrator)
 
 var timetable_both = make_timetable();
-var timetable_rightlot = transpose(timetable_both[0]);
-var timetable_leftlot = transpose(timetable_both[1])
-for (var i=0; i<timetable_rightlot.length; i++) {
-    timetable.push(timetable_rightlot[i]);
-}
+
+console.log(timetable);
+
+ var timetable_rightlot = transpose(timetable_both[0]);
+ var timetable_leftlot = transpose(timetable_both[1])
+ for (var i=0; i<timetable_rightlot.length; i++) {
+     timetable.push(timetable_rightlot[i]);
+ }
 
 render();
 
