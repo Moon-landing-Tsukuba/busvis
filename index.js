@@ -251,19 +251,19 @@ function calc_bus_param(admin_bus) {
 }
 
 function calc_pos(admin){
-  var busstoppositions;
-  if(admin.direction=false){
-    busstoppositions = bus_stop_positions.slice().reverse();
+  var stoppos;
+  if(1){
+    stoppos = bus_stop_positions.slice().reverse();
   }else{
-    busstoppositions = make_position();
+    stoppos = bus_stop_positions;
   } 
   let now = load_now();
   // const now = 142300
   admin.buses.forEach(function(bus, index){
     const total_time = bus.end_time - bus.start_time;
     const propotion = (now - bus.start_time) / total_time;
-    const start_stop = busstoppositions[bus.start_stop];
-    const end_stop = busstoppositions[bus.end_stop];
+    const start_stop = stoppos[bus.start_stop];
+    const end_stop = stoppos[bus.end_stop];
     // console.log(bus.start_stop);
     const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
     const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
