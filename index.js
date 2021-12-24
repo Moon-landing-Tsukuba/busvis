@@ -13,8 +13,8 @@ const h = 3000;
 
 const bus_stop_num = 25;
 
-const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
-const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
+const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公園","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
+const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[36.087872, 140.107274],[36.090369, 140.105539],[36.093142, 140.103876],[36.095351, 140.102961],[36.097729, 140.102154],[36.103252, 140.101509],[36.104838, 140.101194],[36.107915, 140.099888],[36.110122, 140.098603],[36.114711, 140.096923],[36.118348, 140.096042],[36.119404, 140.099170],[36.116047, 140.102103],[36.113164, 140.102179],[36.111278, 140.103595],[36.109826, 140.104035],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
 const bus_stop_positions = make_position(); //canvas上の位置
 
@@ -89,9 +89,11 @@ function Stop(id) {
   this.draw = function(ctx) {
       ctx.lineWidth = w/250;
       ctx.beginPath();
-      if (administrator.user_station === id){
+      if (administrator.dest_station === id) {
         ctx.fillStyle = "red";
-      }else{
+      } else if (administrator.user_station === id) {
+        ctx.fillStyle = "#0cf";
+      } else {
         ctx.fillStyle = "#3f3";
       }
       ctx.strokeStyle = "#000";
@@ -108,14 +110,16 @@ function Stop(id) {
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
     // console.log(me.is_clicked);
     if (me.is_clicked) {
-      administrator.user_station = id;
+      administrator.dest_station = id;
     }
   });
 }
 
 const administrator = {
   direction : true, //右回りならTrue
-  user_station : 3, //バス停の識別IDが入る
+  //gpsed_user_station : 3, //バス停の識別IDが入る
+  user_station : 5,
+  dest_station : undefined,
   target_table :[],
   buses : [],
 };
@@ -343,7 +347,18 @@ function render() {
   
   var image = new Image();
   image.draw();
-  
+
+  //出発地、到着地の色宣言
+  ctx.lineWidth = 5;
+  ctx.font = "italic bold 175pt sans-serif";
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "#0cf";
+  ctx.fillText("出発地", w/2, h/5*4);
+  ctx.strokeText("出発地", w/2, h/5*4);
+  ctx.fillStyle = "red";
+  ctx.fillText("到着地", w/2, h/5*4+h/10);
+  ctx.strokeText("到着地", w/2, h/5*4+h/10);
+
   //map
   var r = h/10
   ctx.lineWidth = w/50;
@@ -525,6 +540,25 @@ function displayData(lat, lng, accu) {
                 + "精度: "       + accu;
 }
 
+function calc_nearest_stop(lat, lng) {
+  var min_dist;
+  var min_dist_index;
+  for (var i=0; i<bus_stop_num; i++) {
+    var dx = lat - bus_stop_latlng[i][0];
+    var dy = lng - bus_stop_latlng[i][1];
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    if (i === 0) {
+      min_dist = dist
+      min_dist_index = 0;
+    } else if (min_dist > dist) {
+      min_dist = dist
+      min_dist_index = i;
+    }
+  }
+  console.log(min_dist_index);
+  return min_dist_index;
+}
+
 /*-------------------------------------------
 *実行パート
 -------------------------------------------*/
@@ -555,7 +589,10 @@ navigator.geolocation.watchPosition( (position) => {
   var lng  = position.coords.longitude;           // 経度を取得
   var accu = position.coords.accuracy;            // 緯度・経度の精度を取得
   displayData(lat, lng, accu);                    // displayData 関数を実行
+  administrator.user_station = calc_nearest_stop(lat, lng);
+  console.log(administrator);
 }, (error) => {                                     // エラー処理（今回は特に何もしない）
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
 });
+
