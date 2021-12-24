@@ -8,8 +8,8 @@
 *ctx : Canvasの描画部
 -------------------------------------------*/
 
-const w = 3000;
-const h = 3000;
+const w = 500;
+const h = 500;
 
 const bus_stop_num = 25;
 
