@@ -548,7 +548,7 @@ for (var i=0; i<timetable_rightlot.length; i++) {
 
 render();
 
-setInterval(render, 10);
+setInterval(render, 30);
 
 navigator.geolocation.watchPosition( (position) => {
   var lat  = position.coords.latitude;            // 緯度を取得
