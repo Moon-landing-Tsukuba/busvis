@@ -118,9 +118,10 @@ const administrator = {
   user_station : 3, //バス停の識別IDが入る
   target_table :[],
   buses : [],
+  holiday : false, //休日ならばtrue
 };
 
-function Image(){
+function Image(){ //このクラスは消す。右左選択はボタンを作る。
   const sizeof_img = 200;
 
   var me = this;
@@ -162,28 +163,28 @@ function Image(){
   });
 }
 
+// これら機能を一括して行う関数を作成する必要あり。
 /*------------------------------------------
 *関数定義パート
 *load_now : 現在時刻を表示 | 返り値例 : 183010
 *check_table : 現在時刻から運行しているバスのtimetableを取得(複数個ある可能性あり)＆administratorに代入
 *create_buses : chek_tableで取得したtimetableをもとに運行しているバスのインスタンスを作成
 *calc_bus_param : 運行中のバス情報をインスタンスに反映させる
-*calc_pos : administratorの中の各バスがどこに居るかを計算
+*calc_pos : administratorの中の各バスが「画面上の」どこに居るかを計算
+*calc_remaining_time : あと何分でユーザーが選択したバス停にバスインスタンスが到着するのかを計算
 *render : 描画関数
 ------------------------------------------*/
 function load_now(){
-  var now = new Date();
-  var hour = now.getHours();
-  var min = now.getMinutes();
-  var sec = now.getSeconds();
-  var time = hour*10000+min*100+sec;  //秒の仕様を後で確認する。
+  let now = new Date();
+  let hour = now.getHours();
+  let min = now.getMinutes();
+  let sec = now.getSeconds();
+  let time = hour*10000+min*100+sec;  //秒の仕様を後で確認する。
   return time;
 }
 
-function check_table(){
+function check_table(){  // (平日or休日)and(左or右)でif-else文書く必要あり。
   let now = load_now();
-  // console.log(now);
-  // const now = 142300; //実際はload_now()関数を使う <--だからtimetableも秒まで書かないとダメだ。
   const table = [];
   for (i=0; i<timetable.length; i++){
     if(timetable[i][0] <= now && now <= timetable[i][27]){
@@ -193,7 +194,7 @@ function check_table(){
   administrator.target_table = table;
 }
 
-function create_buses(tm){
+function create_buses(tm){  //tm : administrater.target_table
   const buses = [];
   tm.forEach(function(value, index){
     const bus = new Bus(index);
@@ -203,13 +204,11 @@ function create_buses(tm){
   administrator.buses = buses;
 }
 
-function calc_bus_param(admin_bus) {
-  let now = load_now(); //ここでは秒変換されていない。ex)163033
-  // var now = 142300; // <--8時58分00秒を表す。
-  
+// この関数はバスのパラメーターを時々刻々と更新しているので、render関数内で実行する必要がありそう。
+function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
+  let now = load_now(); // ex)163033
   
   admin_bus.forEach(function(value, index){
-    
     const target_ends = [];
     value.timetable.forEach(function(element){
       element = element;
@@ -251,20 +250,18 @@ function calc_bus_param(admin_bus) {
 }
 
 function calc_pos(admin){
-  var stoppos;
-  if(1){
+  var stoppos; // ここ変更が更新されていない。
+  if(1){//おそらくここはバスの左右で条件分岐している。
     stoppos = bus_stop_positions.slice().reverse();
   }else{
     stoppos = bus_stop_positions;
   } 
   let now = load_now();
-  // const now = 142300
   admin.buses.forEach(function(bus, index){
     const total_time = bus.end_time - bus.start_time;
     const propotion = (now - bus.start_time) / total_time;
     const start_stop = stoppos[bus.start_stop];
     const end_stop = stoppos[bus.end_stop];
-    // console.log(bus.start_stop);
     const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
     const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
     bus.position_x = x;
@@ -273,7 +270,7 @@ function calc_pos(admin){
 }
 
 //現在の時刻から次のバスが到着するまでの時間を計算
-function detect_arrival(timetable){
+/*function detect_arrival(timetable){
   var now = load_now(); //現在時刻
 
   var target = 0; //次のバスが来る時刻
@@ -303,7 +300,7 @@ function detect_arrival(timetable){
   var arrival_min = Math.floor(arrival/60);
   var arrival_sec = arrival - arrival_min*60;
   return [arrival_min, arrival_sec];
-}
+}*/
 
 /*
 const administrator = {
@@ -331,14 +328,16 @@ function calc_remaining_time(adm){
     const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
     
     const arrival = tgt_time - now_time;
-    if(arrival < 0){
+
+    // 👇ここの処理。もし通過していたらもう一本後のバスについて処理するのがよい。
+    //ただし、もしバスが2台なかったら今のロジックだとうまくいかない。
+    if(arrival < 0){ 
       bus.remaining_time = "バス通過";
       return;
     }
     const arrival_min = Math.floor(arrival/60);
     const arrival_sec = arrival - arrival_min*60;
 
-    // console.log(arrival_min + "分" + arrival_sec + "秒");
     bus.remaining_time = arrival_min + "分" + arrival_sec + "秒";
   });
 }
