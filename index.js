@@ -10,12 +10,11 @@
 document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
       event.target.classList.toggle("on")
       if(event.target.classList.contains("on")){
-        administrator.direction = true;
-        // alert("right");
+        administrator.direction = true;// alert("right");
       }else{
-        administrator.direction = false;
-        // alert("left");
+        administrator.direction = false;// alert("left");
       }
+      decide_timetable(administrator);
       console.log(administrator);
 })
 
@@ -28,7 +27,6 @@ const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大�
 const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
 let timetable = timetable_list[0]
-console.log(timetable)
 
 const bus_stop_positions = make_position(); //canvas上の位置
 
@@ -44,9 +42,6 @@ cvs.width = w;
 cvs.height = h;
 document.getElementById("container").appendChild(cvs);
 var ctx = cvs.getContext("2d");
-
-var img_left = document.createElement("img");
-var img_right = document.createElement("img");
 
 /*-------------------------------------------
 *オブジェクト定義パート
@@ -122,7 +117,7 @@ const administrator = {
   user_station : 3, //バス停の識別IDが入る
   target_table :[],
   buses : [],
-  holiday : false, //休日ならばtrue
+  holiday : true, //休日ならばtrue
 };
 
 
@@ -136,6 +131,7 @@ const administrator = {
 *calc_bus_param : 運行中のバス情報をインスタンスに反映させる
 *calc_pos : administratorの中の各バスが「画面上の」どこに居るかを計算
 *calc_remaining_time : あと何分でユーザーが選択したバス停にバスインスタンスが到着するのかを計算
+*decide_timetable : adiministratorのholidayとdirectionの値からtimetableを決定する。
 *render : 描画関数
 ------------------------------------------*/
 function load_now(){
@@ -264,6 +260,19 @@ function calc_remaining_time(adm){
   });
 }
 
+function decide_timetable(adm){
+  if(adm.direction && !adm.holiday){ //平日・右回り// alert("平日・右回り");
+    timetable = timetable_list[0];
+  }else if(!adm.direction && !adm.holiday){//平日・左回り// alert("平日・左回り");
+    timetable = timetable_list[1];
+  }else if(adm.direction && adm.holiday){//休日・右回り// alert("休日・右回り");
+    timetable = timetable_list[2];
+  }else if(!adm.direction && adm.holiday){//休日・左回り// alert("休日・左回り");
+    timetable = timetable_list[3];
+  }
+}
+
+
 function render() {
   // console.log(administrator);
   ctx.clearRect(0, 175, w, h);
@@ -307,21 +316,6 @@ function render() {
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
-
-  // var timetable_both = make_timetable();
-  // var timetable_rightlot = transpose(timetable_both[0]);
-  // var timetable_leftlot = transpose(timetable_both[1])
-  // timetable = []
-  // if (administrator.direction === true) {
-  //   for (var i=0; i<timetable_rightlot.length; i++) {
-  //     timetable.push(timetable_rightlot[i]);
-  //   }
-  // } else {
-  //   for (var i=0; i<timetable_leftlot.length; i++) {
-  //     timetable.push(timetable_leftlot[i]);
-  //   }
-  // }
-  
 }
 
 function zfill(NUM, LEN){
@@ -367,19 +361,13 @@ function displayData(lat, lng, accu) {
 *実行パート
 -------------------------------------------*/
 
+decide_timetable(administrator);
 check_table();
 create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
 calc_pos(administrator);
 
 calc_remaining_time(administrator)
-
-// var timetable_both = make_timetable();
-// var timetable_rightlot = transpose(timetable_both[0]);
-// var timetable_leftlot = transpose(timetable_both[1])
-// for (var i=0; i<timetable_rightlot.length; i++) {
-//     timetable.push(timetable_rightlot[i]);
-// }
 
 render();
 
