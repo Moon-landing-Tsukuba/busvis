@@ -9,6 +9,13 @@
 -------------------------------------------*/
 document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
       event.target.classList.toggle("on")
+      if(event.target.classList.contains("on")){
+        administrator.direction = true;
+        // alert("right");
+      }else{
+        administrator.direction = false;
+        // alert("left");
+      }
 })
 
 const w = 3000;
