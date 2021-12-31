@@ -7,6 +7,9 @@
 *stops : バス停インスタンス <-- render部分で毎回新たに生み出すのが無駄であるため
 *ctx : Canvasの描画部
 -------------------------------------------*/
+document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
+      event.target.classList.toggle("on")
+})
 
 const w = 3000;
 const h = 3000;
