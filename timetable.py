@@ -43,6 +43,9 @@ for i in range(len(timetable_url)):
     l:list = []
     for p in soup.find_all('td', class_='time'):
       time_text:str = p.get_text()
+      if(time_text[0]=='0'):
+        time_text = time_text[1:]
+      
       time_text = time_text + '00'
       if '発' in time_text:
         time:str = time_text.replace(' 発', '')
@@ -61,7 +64,7 @@ days = ['平日右回り','平日左回り', '休日右回り', '休日左回り
 with open('timetable.txt', 'w') as f:
   f.write('[')
   for i in range(len(timetable)):
-    f.write(days[i])
+    # f.write(days[i])
     f.write('[')
     for j in range(len(timetable[i])):
       f.write('[')
@@ -69,7 +72,7 @@ with open('timetable.txt', 'w') as f:
         f.write(timetable[i][j][n])
         if(n != len(timetable[i][j])-1):
           f.write(', ')
-      f.write(']\n')
-    f.write(']\n')
+      f.write('],\n')
+    f.write('],\n')
   f.write(']\n')
 
