@@ -19,25 +19,18 @@ document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
       console.log(administrator);
 })
 
-const w = 3000;
-const h = 3000;
+const w = 500;
+const h = 500;
 
 const bus_stop_num = 25;
 
 const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
 const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
-const bus_stop_positions = make_position(); //canvas上の位置
+let timetable = timetable_list[0]
+console.log(timetable)
 
-// const timetable = [
-//   [2300, 3300, 3500, 4400, 4600, 10400],
-//   [10300, 10500, 10520, 10540, 10600, 10620],
-//   [11100, 11100, 11100, 11100, 11100, 12200],
-//   [84000, 84100, 84200, 90700, 90800, 91500],
-//   [85500, 85900, 90200, 91700, 91800, 92500],
-//   [105000, 105100, 105200, 111700, 111800, 112500],
-// ];
-var timetable = [];
+const bus_stop_positions = make_position(); //canvas上の位置
 
 let stops = [];
 for(i=0; i<bus_stop_num; i++){
@@ -315,86 +308,24 @@ function render() {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
 
-  var timetable_both = make_timetable();
-  var timetable_rightlot = transpose(timetable_both[0]);
-  var timetable_leftlot = transpose(timetable_both[1])
-  timetable = []
-  if (administrator.direction === true) {
-    for (var i=0; i<timetable_rightlot.length; i++) {
-      timetable.push(timetable_rightlot[i]);
-    }
-  } else {
-    for (var i=0; i<timetable_leftlot.length; i++) {
-      timetable.push(timetable_leftlot[i]);
-    }
-  }
+  // var timetable_both = make_timetable();
+  // var timetable_rightlot = transpose(timetable_both[0]);
+  // var timetable_leftlot = transpose(timetable_both[1])
+  // timetable = []
+  // if (administrator.direction === true) {
+  //   for (var i=0; i<timetable_rightlot.length; i++) {
+  //     timetable.push(timetable_rightlot[i]);
+  //   }
+  // } else {
+  //   for (var i=0; i<timetable_leftlot.length; i++) {
+  //     timetable.push(timetable_leftlot[i]);
+  //   }
+  // }
   
 }
 
 function zfill(NUM, LEN){
 	return ( Array(LEN).join('0') + NUM ).slice( -LEN );
-}
-
-function make_timetable() {
-  const timetable = [];
-  var interval_rightlot = [0, 30, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 30, 30, 60, 60, 60, 60, 60, 60, 60, 60, 60];
-  var interval_leftlot = interval_rightlot.slice().reverse();
-  var interval_rightlot_acc = [];
-  var interval_leftlot_acc = [];
-  var sum = 0;
-  for (var i=0; i<interval_rightlot.length; i++){
-      sum += interval_rightlot[i];
-      interval_rightlot_acc.push(sum);
-  }
-  var sum = 0;
-  for (var i=0; i<interval_leftlot.length; i++){
-      sum += interval_leftlot[i];
-      interval_leftlot_acc.push(sum);
-  }
-  // console.log(interval_rightlot_acc);
-  var timetable_rightlot = [];
-  var timetable_leftlot = [];
-  for (var i=0; i<interval_rightlot.length; i++) {
-      var timetable_rightlot_stop = []
-      plus = interval_rightlot_acc[i];
-      for (var houri=9; houri<21; houri++) {
-          for (var mini=0; mini<60; mini+=20) {
-              time = houri*60*60 + mini*60 + plus;
-              var hour = Math.floor(time/3600);
-              hour = zfill(hour, 2)
-              var min = Math.floor((time - hour*3600)/60);
-              min = zfill(min, 2)
-              var sec = time - hour*3600 - min*60;
-              sec = zfill(sec, 2)
-              timetable_rightlot_stop.push(Number("" + hour + min + sec));
-          }
-      }
-      // console.log(timetable_rightlot_stop)
-      timetable_rightlot.push(timetable_rightlot_stop);
-      
-  }
-  // console.log(timetable_rightlot)
-  for (var i=0; i<interval_leftlot.length; i++) {
-      var timetable_leftlot_stop = []
-      plus = interval_leftlot_acc[i];
-      for (var houri=9; houri<21; houri++) {
-          for (var mini=0; mini<60; mini+=20) {
-              time = houri*60*60 + mini*60 + plus;
-              var hour = Math.floor(time/3600);
-              hour = zfill(hour, 2)
-              var min = Math.floor((time - hour*3600)/60);
-              min = zfill(min, 2)
-              var sec = time - hour*3600 - min*60;
-              sec = zfill(sec, 2)
-              timetable_leftlot_stop.push(Number("" + hour + min + sec));
-          }
-      }
-      timetable_leftlot.push(timetable_leftlot_stop);
-  }
-  timetable.push(timetable_rightlot);
-  timetable.push(timetable_leftlot);
-
-  return timetable;
 }
 
 function make_position(){
@@ -436,22 +367,19 @@ function displayData(lat, lng, accu) {
 *実行パート
 -------------------------------------------*/
 
-console.log(administrator);
-
 check_table();
 create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
 calc_pos(administrator);
-console.log(administrator);
 
 calc_remaining_time(administrator)
 
-var timetable_both = make_timetable();
-var timetable_rightlot = transpose(timetable_both[0]);
-var timetable_leftlot = transpose(timetable_both[1])
-for (var i=0; i<timetable_rightlot.length; i++) {
-    timetable.push(timetable_rightlot[i]);
-}
+// var timetable_both = make_timetable();
+// var timetable_rightlot = transpose(timetable_both[0]);
+// var timetable_leftlot = transpose(timetable_both[1])
+// for (var i=0; i<timetable_rightlot.length; i++) {
+//     timetable.push(timetable_rightlot[i]);
+// }
 
 render();
 
@@ -466,3 +394,13 @@ navigator.geolocation.watchPosition( (position) => {
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
 });
+
+
+
+
+
+
+
+
+
+
