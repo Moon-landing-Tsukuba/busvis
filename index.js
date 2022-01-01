@@ -28,6 +28,25 @@ const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,]
 
 let timetable = timetable_list[0]
 
+const holiday_list = [
+  '2022-1-1',
+  '2022-1-10',
+  '2022-2-11',
+  '2022-2-23',
+  '2022-3-21',
+  '2022-4-29',
+  '2022-5-3',
+  '2022-5-4',
+  '2022-5-5',
+  '2022-7-18',
+  '2022-8-11',
+  '2022-9-19',
+  '2022-9-23',
+  '2022-10-10',
+  '2022-11-3',
+  '2022-11-23',
+]
+
 const bus_stop_positions = make_position(); //canvas上の位置
 
 let stops = [];
@@ -117,7 +136,7 @@ const administrator = {
   user_station : 3, //バス停の識別IDが入る
   target_table :[],
   buses : [],
-  holiday : true, //休日ならばtrue
+  holiday : false, //休日ならばtrue
 };
 
 
@@ -132,6 +151,7 @@ const administrator = {
 *calc_pos : administratorの中の各バスが「画面上の」どこに居るかを計算
 *calc_remaining_time : あと何分でユーザーが選択したバス停にバスインスタンスが到着するのかを計算
 *decide_timetable : adiministratorのholidayとdirectionの値からtimetableを決定する。
+*check_holiday : 祝日または休日ならadministratorのholidayをtrueとする関数。
 *render : 描画関数
 ------------------------------------------*/
 function load_now(){
@@ -276,9 +296,15 @@ function check_holiday(){
   const dateOBJ = new Date();
   const year = dateOBJ.getFullYear();
   const month = dateOBJ.getMonth() + 1;
-  const day = dateOBJ.getDate();
+  const date = dateOBJ.getDate();
+  const day = dateOBJ.getDay();
+  const today = year + '-' + month + '-' + date;
 
-  const today = year + '-' + month + '-' + day;
+  if(holiday_list.includes(today) || day == 0 || day == 6){
+    administrator.holiday = true;
+  }else{
+    administrator.holiday = false;
+  }
 }
 
 function render() {
@@ -369,6 +395,7 @@ function displayData(lat, lng, accu) {
 *実行パート
 -------------------------------------------*/
 
+check_holiday();
 decide_timetable(administrator);
 check_table();
 create_buses(administrator.target_table);
