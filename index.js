@@ -136,7 +136,7 @@ const administrator = {
   user_station : 3, //バス停の識別IDが入る
   target_table :[],
   buses : [],
-  holiday : true, //休日ならばtrue
+  holiday : false, //休日ならばtrue
 };
 
 
@@ -151,6 +151,7 @@ const administrator = {
 *calc_pos : administratorの中の各バスが「画面上の」どこに居るかを計算
 *calc_remaining_time : あと何分でユーザーが選択したバス停にバスインスタンスが到着するのかを計算
 *decide_timetable : adiministratorのholidayとdirectionの値からtimetableを決定する。
+*check_holiday : 祝日または休日ならadministratorのholidayをtrueとする関数。
 *render : 描画関数
 ------------------------------------------*/
 function load_now(){
@@ -291,6 +292,20 @@ function decide_timetable(adm){
   }
 }
 
+function check_holiday(){
+  const dateOBJ = new Date();
+  const year = dateOBJ.getFullYear();
+  const month = dateOBJ.getMonth() + 1;
+  const date = dateOBJ.getDate();
+  const day = dateOBJ.getDay();
+  const today = year + '-' + month + '-' + date;
+
+  if(holiday_list.includes(today) || day == 0 || day == 6){
+    administrator.holiday = true;
+  }else{
+    administrator.holiday = false;
+  }
+}
 
 function render() {
   // console.log(administrator);
@@ -380,6 +395,7 @@ function displayData(lat, lng, accu) {
 *実行パート
 -------------------------------------------*/
 
+check_holiday();
 decide_timetable(administrator);
 check_table();
 create_buses(administrator.target_table);
