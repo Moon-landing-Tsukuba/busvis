@@ -272,6 +272,14 @@ function decide_timetable(adm){
   }
 }
 
+function check_holiday(){
+  const dateOBJ = new Date();
+  const year = dateOBJ.getFullYear();
+  const month = dateOBJ.getMonth() + 1;
+  const day = dateOBJ.getDate();
+
+  const today = year + '-' + month + '-' + day;
+}
 
 function render() {
   // console.log(administrator);
