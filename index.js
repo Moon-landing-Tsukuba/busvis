@@ -18,6 +18,17 @@ document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
       console.log(administrator);
 })
 
+document.querySelector(".switch-holiday-weekday").addEventListener("click",(event)=>{
+  event.target.classList.toggle("weekday")
+  if(event.target.classList.contains("weekday")){
+    administrator.holiday = false;// alert("holiday = false");
+  }else{
+    administrator.holiday = true;// alert("holiday = true");
+  }
+  decide_timetable(administrator);
+  console.log(administrator);
+})
+
 const w = 500;
 const h = 500;
 
@@ -302,8 +313,10 @@ function check_holiday(){
 
   if(holiday_list.includes(today) || day == 0 || day == 6){
     administrator.holiday = true;
+    document.querySelector(".switch-holiday-weekday").classList.remove("weekday");
   }else{
     administrator.holiday = false;
+    document.querySelector(".switch-holiday-weekday").classList.add("weekday");
   }
 }
 
