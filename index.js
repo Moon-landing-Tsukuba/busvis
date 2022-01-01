@@ -564,3 +564,4 @@ navigator.geolocation.watchPosition( (position) => {
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
 });
+
