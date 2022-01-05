@@ -29,6 +29,16 @@ document.querySelector(".switch-holiday-weekday").addEventListener("click",(even
   console.log(administrator);
 })
 
+const reactions = document.querySelectorAll(".reaction-item");
+reactions.forEach(reaction => {
+  reaction.addEventListener("click", () => {
+    const late = reaction.dataset.late;
+    const id = 3;
+    const direction = administrator.direction;
+    alert("late : " + late + " - id : " + id + " - direction : " + direction);
+  })
+})
+
 const w = 500;
 const h = 500;
 

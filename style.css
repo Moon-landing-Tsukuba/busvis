@@ -58,3 +58,30 @@
   box-shadow: 2px 2px 2px 0 #bbbbbb, 0px 0px 10px 0 #e4e4e4;
 }
 
+.user-reaction-box{
+  text-align: center;
+}
+
+.user-reaction-box ul{
+  list-style-type: none;
+  /* text-align: center; */
+}
+
+.user-reaction-box ul li{
+  display: inline-block;
+  text-align: center;
+  width: 100px;
+  border-radius: 20px;
+  border: 1px solid;
+  padding: 10px 0;
+  margin: 10px;
+  vertical-align: middle;
+  background: rgba(254, 255, 255, 0.5);
+  font-weight: bold;
+  color:rgb(7, 7, 7);
+  cursor: pointer;
+}
+
+.user-reaction-box ul li:hover{
+  background-color: rgba(187, 187, 187, 0.2);
+}
