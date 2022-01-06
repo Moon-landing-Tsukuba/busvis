@@ -148,6 +148,7 @@ const administrator = {
   target_table :[],
   buses : [],
   holiday : false, //休日ならばtrue
+  selected_bus_id : 1,
 };
 
 
@@ -356,7 +357,7 @@ function render() {
   ctx.fillStyle= "black";
   ctx.font = "italic bold 80pt sans-serif";
   ctx.fillText(administrator.buses[0].remaining_time, 1300, 1300);
-  console.log(administrator);
+  // console.log(administrator);
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
