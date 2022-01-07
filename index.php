@@ -58,7 +58,7 @@ $lates = getLate($pdo);
     <head>
         <meta charset="UTF-8" />
         <title>Busvis</title>
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div id="gps">
