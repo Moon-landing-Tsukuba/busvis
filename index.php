@@ -1,8 +1,8 @@
 <?php
 
-define('DSN', 'mysql:host=db;dbname=myapp;charset=utf8mb4');
-define('DB_USER', 'myappuser');
-define('DB_PASS', 'myapppass');
+define('DSN', 'mysql:host=kutnpvrhom7lki7u.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306;dbname=lcgyul56yfcheas3;charset=utf8mb4');
+define('DB_USER', 'qniv4bnn438d3vf3');
+define('DB_PASS', 'tpcjvhz7crsilp40');
 
 try {
   $pdo = new PDO(
