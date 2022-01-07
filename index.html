@@ -3,11 +3,18 @@
     <head>
         <meta charset="UTF-8" />
         <title>Hello World</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div id="gps">
             ここにデータを表示
         </div>
+
+        <div class="btn-box">
+            <div class="btn switch-left-right on"></div>
+            <div class="btn switch-holiday-weekday weekday"></div>
+        </div>
+
         <p id="helloworld"></p>
         <p id="testdis"></p>
         <div id="container"></div>
@@ -15,8 +22,8 @@
             <p id="arrival"></p>
             <p id="nowtime"></p>
         </div>
-        
 
+        <script src="./timetable_list.js"></script>
         <script src="./index.js"></script>
     </body>
 </html>
