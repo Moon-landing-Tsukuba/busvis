@@ -18,6 +18,8 @@ document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
       console.log(administrator);
 })
 
+
+
 document.querySelector(".switch-holiday-weekday").addEventListener("click",(event)=>{
   event.target.classList.toggle("weekday")
   if(event.target.classList.contains("weekday")){
@@ -112,7 +114,7 @@ function Stop(id) {
   var [x, y] = bus_stop_positions[id];
   this.id = id;
   this.size = w/50;
-
+  this.name = bus_stop_names[id];
   this.is_clicked = false;
 
   this.draw = function(ctx) {
@@ -129,6 +131,12 @@ function Stop(id) {
       ctx.arc(x, y, me.size, 0, 2*Math.PI, true);
       ctx.fill();
       ctx.stroke();
+      if(!administrator.mode){
+        ctx.fillStyle = "black";
+        ctx.font = "italic bold 5pt sans-serif";
+        ctx.fillText(this.name, x-5*this.name.length/2, y-h/50);
+      }
+
   };
   window.addEventListener("mousedown", function(e) {
     var dx = x - e.layerX;
@@ -139,12 +147,14 @@ function Stop(id) {
     if (me.is_clicked) {
       administrator.user_station = id;
     }
+    administrator.mode=true;
   });
 }
 
 const administrator = {
   direction : true, //右回りならTrue
   user_station : 3, //バス停の識別IDが入る
+  mode : false,
   target_table :[],
   buses : [],
   holiday : false, //休日ならばtrue
@@ -322,11 +332,7 @@ function check_holiday(){
     document.querySelector(".switch-holiday-weekday").classList.add("weekday");
   }
 }
-
-function render() {
-  // console.log(administrator);
-  ctx.clearRect(0, 0, w, h);
-  
+function map_draw(){
   //map
   var r = h/10
   ctx.lineWidth = w/50;
@@ -341,6 +347,13 @@ function render() {
   ctx.lineTo(w/2+h/5, h-2*h/10);
   ctx.lineTo(w/2-h/5, h-2*h/10);
   ctx.stroke();
+
+}
+function render() {
+  // console.log(administrator);
+  ctx.clearRect(0, 0, w, h);
+  if(administrator.mode)map_draw();
+
 
   //停留所インスタンスの生成
   for (var i=0; i<bus_stop_num; i++){
