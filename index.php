@@ -100,7 +100,7 @@ $lates = getLate($pdo);
             <p id="nowtime"></p>
         </div>
 
-        <script src="js/timetable_list.js"></script>
-        <script src="js/index.js"></script>
+        <script src="timetable_list.js"></script>
+        <script src="index.js"></script>
     </body>
 </html>
