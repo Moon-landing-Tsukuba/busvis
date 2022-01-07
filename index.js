@@ -493,11 +493,3 @@ displayData(lat, lng, accu);                    // displayData 関数を実行
 }, {
 enableHighAccuracy: true                        // 高精度で測定するオプション
 });
-
-
-
-
-
-
-
-
