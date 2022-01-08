@@ -386,43 +386,43 @@ document.querySelector(".switch-holiday-weekday").classList.add("weekday");
 }
 
 function render() {
-// console.log(administrator);
-ctx.clearRect(0, 0, w, h);
+  // console.log(administrator);
+  ctx.clearRect(0, 0, w, h);
 
-//map
-var r = h/10
-ctx.lineWidth = w/50;
-ctx.strokeStyle = "#000";
-ctx.beginPath();
-ctx.moveTo(w/2-h/5, h-2*h/10);
-ctx.lineTo(w/2-h/5, h/10);
-//ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
-//開始角は3時の方角で時計回り
-// ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
-ctx.lineTo(w/2 + h/5, h/10);
-ctx.lineTo(w/2+h/5, h-2*h/10);
-ctx.lineTo(w/2-h/5, h-2*h/10);
-ctx.stroke();
+  //map
+  var r = h/10
+  ctx.lineWidth = w/50;
+  ctx.strokeStyle = "#000";
+  ctx.beginPath();
+  ctx.moveTo(w/2-h/5, h-2*h/10);
+  ctx.lineTo(w/2-h/5, h/10);
+  //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
+  //開始角は3時の方角で時計回り
+  // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
+  ctx.lineTo(w/2 + h/5, h/10);
+  ctx.lineTo(w/2+h/5, h-2*h/10);
+  ctx.lineTo(w/2-h/5, h-2*h/10);
+  ctx.stroke();
 
-//停留所インスタンスの生成
-for (var i=0; i<bus_stop_num; i++){
-  stops[i].draw(ctx);
-}
+  //停留所インスタンスの生成
+  for (var i=0; i<bus_stop_num; i++){
+    stops[i].draw(ctx);
+  }
 
-check_table();
-create_buses(administrator.target_table);
-calc_bus_param(administrator.buses);
-calc_pos(administrator);
-calc_remaining_time(administrator);
+  check_table();
+  create_buses(administrator.target_table);
+  calc_bus_param(administrator.buses);
+  calc_pos(administrator);
+  calc_remaining_time(administrator);
 
 
-ctx.fillStyle= "black";
-ctx.font = "italic bold 80pt sans-serif";
-ctx.fillText(administrator.buses[0].remaining_time, 1300, 1300);
+  ctx.fillStyle= "black";
+  ctx.font = "italic bold 80pt sans-serif";
+  ctx.fillText(administrator.buses[0].remaining_time, 1300, 1300);
 
-administrator.buses.forEach(function(bus, index){
-bus.draw(ctx, bus.position_x, bus.position_y);
-});
+  administrator.buses.forEach(function(bus, index){
+    bus.draw(ctx, bus.position_x, bus.position_y);
+  });
 }
 
 function zfill(NUM, LEN){
