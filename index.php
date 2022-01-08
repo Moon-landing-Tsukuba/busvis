@@ -80,7 +80,7 @@ $lates = getLate($pdo);
 
         <div id="result">バスの遅延は --> 0 分です</div><!-- このdiv内に整形したデータを非同期で入れる -->
 
-        <ul>
+        <!-- <ul>
           <?php foreach ($lates as $late): ?>
             <li>
               <span>
@@ -90,7 +90,7 @@ $lates = getLate($pdo);
               </span>
             </li>
           <?php endforeach; ?>
-        </ul>
+        </ul> -->
 
         <p id="helloworld"></p>
         <p id="testdis"></p>
