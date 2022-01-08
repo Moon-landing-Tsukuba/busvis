@@ -31,6 +31,10 @@ document.querySelector(".switch-holiday-weekday").addEventListener("click",(even
   console.log(administrator);
 })
 
+document.querySelector(".btn2").addEventListener('click', function(e){
+  alert("clicked!!");
+})
+
 const w = 500;
 const h = 500;
 
@@ -83,6 +87,7 @@ var ctx = cvs.getContext("2d");
 -------------------------------------------*/
 
 function Bus(id) {
+  var me = this;
   this.id = id;
   this.timetable = [];
   this.start_stop = 0;
@@ -93,6 +98,7 @@ function Bus(id) {
   this.position_x = 0;
   this.position_y = 0;
   this.size = w/50*3;
+  this.is_clicked = false;
 
   this.draw = function(ctx, x, y) {
       ctx.lineWidth = w/250;
@@ -106,7 +112,7 @@ function Bus(id) {
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
-  };    
+  };
 }
 
 function Stop(id) {
@@ -120,7 +126,7 @@ function Stop(id) {
   this.draw = function(ctx) {
       ctx.lineWidth = w/250;
       ctx.beginPath();
-      if (administrator.user_station === id){
+      if (administrator.user_station == id){
         ctx.fillStyle = "red";
       }else{
         ctx.fillStyle = "#3f3";
