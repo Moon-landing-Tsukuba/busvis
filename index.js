@@ -58,7 +58,7 @@ reactions.forEach(reaction => {
 const w = 500;
 const h = 500;
 
-const bus_stop_num = 25;
+const bus_stop_num = 28;
 
 const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公演","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
 const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[,],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
@@ -304,23 +304,25 @@ value.end_time = target_end;
 }
 
 function calc_pos(admin){
-var stoppos; // ここ変更が更新されていない。
-if(1){//おそらくここはバスの左右で条件分岐している。
-stoppos = bus_stop_positions.slice().reverse();
-}else{
-stoppos = bus_stop_positions;
-} 
-let now = load_now();
-admin.buses.forEach(function(bus, index){
-const total_time = bus.end_time - bus.start_time;
-const propotion = (now - bus.start_time) / total_time;
-const start_stop = stoppos[bus.start_stop];
-const end_stop = stoppos[bus.end_stop];
-const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
-const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
-bus.position_x = x;
-bus.position_y = y;
-});
+  var stopps; // ここ変更が更新されていない。
+  
+  if(admin.direction){//おそらくここはバスの左右で条件分岐している。  
+    stopps = bus_stop_positions;
+  }else{
+    stopps = bus_stop_positions.slice().reverse();
+  } 
+  
+  let now = load_now();
+  admin.buses.forEach(function(bus, index){
+    const total_time = bus.end_time - bus.start_time;
+    const propotion = (now - bus.start_time) / total_time;
+    const start_stop = stopps[bus.start_stop];
+    const end_stop = stopps[bus.end_stop];
+    const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
+    const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
+    bus.position_x = x;
+    bus.position_y = y;
+  });
 }
 
 function calc_remaining_time(adm){
@@ -385,26 +387,21 @@ document.querySelector(".switch-holiday-weekday").classList.add("weekday");
 
 function render() {
 // console.log(administrator);
-ctx.clearRect(0, 175, w, h);
+ctx.clearRect(0, 0, w, h);
 
 //map
 var r = h/10
 ctx.lineWidth = w/50;
 ctx.strokeStyle = "#000";
 ctx.beginPath();
-ctx.moveTo(w/2-h/5, 9*h/10);
-ctx.lineTo(w/2-h/5, h/5);
+ctx.moveTo(w/2-h/5, h-2*h/10);
+ctx.lineTo(w/2-h/5, h/10);
 //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
 //開始角は3時の方角で時計回り
 // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
-ctx.lineTo(w/2-h/5+r, h/10);
-ctx.lineTo(w/2+h/10, h/10);
-// ctx.arc(w/2+h/10, h/10+r, r, 3*Math.PI/2, 0, false);
-ctx.lineTo(w/2+h/5, h/10+r);
-ctx.lineTo(w/2+h/5, 3*h/5);
-// ctx.arc(w/2+h/5-r, 3*h/5, r, 0, Math.PI/2, false);
-ctx.lineTo(w/2+h/5-r, 3*h/5+r);
-ctx.lineTo(w/2-h/5, 3*h/5+r);
+ctx.lineTo(w/2 + h/5, h/10);
+ctx.lineTo(w/2+h/5, h-2*h/10);
+ctx.lineTo(w/2-h/5, h-2*h/10);
 ctx.stroke();
 
 //停留所インスタンスの生成
@@ -433,29 +430,26 @@ return ( Array(LEN).join('0') + NUM ).slice( -LEN );
 }
 
 function make_position(){
-const positions = [];
-for (var i=0; i<25; i++) {
-var pos = [0, 0]
-if (i < 11) {
-    pos[0] = w/2 - h/5
-    pos[1] = h-h/10-3.5*h/50*i
-} else if (i < 15) {
-    pos[0] = w/2 - h/10 + h/15*(i-11)
-    pos[1] = h/10
-} else if (i < 21) {
-    pos[0] = w/2 + h/5
-    pos[1] = h/5 + 2*h/25*(i-15)
-} else {
-    pos[0] = w/2 + h/10 - h/15*(i-21)
-    pos[1] = 7*h/10
-}
-positions.push(pos);
-}
-positions.push(positions[3]);
-positions.push(positions[2]);
-positions.push(positions[1]);
-positions.push(positions[0]);
-return positions;
+  const positions = [];
+  for (var i=0; i<29; i++) {
+    var pos = [0, 0];
+    if (i < 11) {
+        pos[0] = w/2 - h/5;
+        pos[1] = h-2*h/10-3.5*h/50*i;
+    } else if (i < 14) {
+        pos[0] = w/2 - h/10 + h/10*(i-11);
+        pos[1] = h/10;
+    } else if (i < 25) {
+        pos[0] = w/2 + h/5
+        pos[1] = 2*h/10 - 3/100*h+ 3.5*h/50*(i-15);
+    }  else  {
+        pos[0] = w/2 + h/10 - h/10*(i-25);
+        pos[1] = h-2*h/10;
+    }
+    positions.push(pos);
+  }
+
+  return positions;
 }
 
 const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
