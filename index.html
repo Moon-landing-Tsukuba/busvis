@@ -6,21 +6,33 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div id="gps">
+        <!-- <div id="gps">
             ここにデータを表示
+        </div> -->
+
+        <header class="page-header wrapper">
+            <p>筑波大学中央</p>
+            <p>あと○○分</p>
+            <p>2分の遅れ予想</p>
+        </header>
+        
+        <div class="user-reaction-box">
+            <ul>
+                <li class="reaction-item" data-late="0">遅れなし</li>
+                <li class="reaction-item" data-late="2">2分遅れ</li>
+                <li class="reaction-item" data-late="4">4分遅れ</li>
+            </ul>
+        </div>
+
+        <div class="wrapper">
+            <div id="container">
+                <canvas id="bus-map"></canvas>
+            </div>
         </div>
 
         <div class="btn-box">
             <div class="btn switch-left-right on"></div>
             <div class="btn switch-holiday-weekday weekday"></div>
-        </div>
-
-        <p id="helloworld"></p>
-        <p id="testdis"></p>
-        <div id="container"></div>
-        <div>
-            <p id="arrival"></p>
-            <p id="nowtime"></p>
         </div>
 
         <script src="./timetable_list.js"></script>

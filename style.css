@@ -1,6 +1,39 @@
+/* 
+----------------------------------------------- */
+/* body{
+  margin: 0;
+} */
+
+
+/* HEADER
+----------------------------------------------- */
+.wrapper{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 4%;
+}
+
+.page-header{
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  background-color: rgba(96, 153, 240, 0.664);
+}
+
+#container{
+  text-align: center;
+}
+
+#bus-map{
+  /* margin: 0 auto; */
+  display: inline-block;
+}
+
 .btn-box{
   text-align: center;
   display: flex;
+  background-color: rgba(96, 153, 240, 0.664);
+  padding: 2% 0;
 }
 
 .btn{
