@@ -42,15 +42,16 @@ reactions.forEach(reaction => {
     }
     // alert("late : " + late + " - id : " + id + " - direction : " + direction);
 
-    fetch('../index.php', {
-      method: 'POST',
-      body: new URLSearchParams({
-        fetchid: id,
-        direct: direction,
-        latetime: late,
-      })
-    });
-
+    if(administrator.correct_holiday == administrator.holiday){
+      fetch('index.php', {
+        method: 'POST',
+        body: new URLSearchParams({
+          fetchid: id,
+          direct: direction,
+          latetime: late,
+        })
+      });
+    }
     alert("id : " + id + " - direction : " + direction + " - latetime : " + late);
   });
 })
@@ -154,6 +155,7 @@ function Stop(id) {
     ctx.fill();
     ctx.stroke();
   };
+
   window.addEventListener("mousedown", function (e) {
     var dx = x - e.layerX;
     var dy = y - e.layerY;
@@ -163,30 +165,16 @@ function Stop(id) {
     if (me.is_clicked) {
       administrator.user_station = id;
 
-      //Ajaxを記述
-      // var req = new XMLHttpRequest();
-      // req.open('GET', '../index.php?id=' + administrator.user_station, true);
-      // req.send(null);
-      // req.onreadystatechange = function() {
-      //   var result = document.getElementById('result');
-      //   console.log('ok');
-      //   if (req.readyState == 4) { // 通信の完了時
-      //     if (req.status == 200) { // 通信の成功時
-      //       result.innerHTML = req.responseText;
-      //     }
-      //   }else{
-      //     result.innerHTML = "通信中...";
-      //   }
-      // }
-
       let direction;
       if (administrator.direction) {
         direction = 'rights';
       } else {
         direction = 'lefts';
       }
+
+      //Ajaxを記述。 バスの遅延時間を取得する。
       var req = new XMLHttpRequest();
-      req.open('POST', '../index.php', true);
+      req.open('POST', 'index.php', true);
       req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       req.send("id=" + administrator.user_station + "&direction=" + direction);
       req.onreadystatechange = function () {
@@ -236,7 +224,7 @@ function load_now() {
   return time;
 }
 
-function check_table() {  // (平日or休日)and(左or右)でif-else文書く必要あり。
+function check_table() {
   let now = load_now();
   const table = [];
   for (i = 0; i < timetable.length; i++) {
