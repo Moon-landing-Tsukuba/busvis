@@ -302,7 +302,7 @@ function calc_pos(admin) {
   let now = load_now();
   admin.buses.forEach(function (bus, index) {
     const total_time = bus.end_time - bus.start_time;
-    const propotion = (now - bus.start_time) / total_time;
+    const propotion = (now - bus.start_time) / total_time / 0.6;
     const start_stop = stopps[bus.start_stop];
     const end_stop = stopps[bus.end_stop];
     const x = start_stop[0] + (end_stop[0] - start_stop[0]) * propotion; // <-- ここマイナスとかあるからもう少し考えた方が
