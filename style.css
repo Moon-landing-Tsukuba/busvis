@@ -1,35 +1,85 @@
-/* 
+/* Common
 ----------------------------------------------- */
-/* body{
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   margin: 0;
-} */
+  padding: 0;
+}
 
 
 /* HEADER
 ----------------------------------------------- */
 .wrapper{
-  max-width: 1100px;
+  /* max-width: 1100px; */
+  width: 100%;
   margin: 0 auto;
-  padding: 0 4%;
+  /* padding: 0 4%; */
 }
 
 .page-header{
+  padding: 10px 0;
   text-align: center;
   color: #fff;
   font-weight: bold;
   background-color: rgba(96, 153, 240, 0.664);
+  position:fixed;
 }
 
+
+/* Reaction-Button
+----------------------------------------------- */
+.user-reaction-box{
+  padding-top: 102px;
+  text-align: center;
+  font-size: 0.5em;
+}
+
+.user-reaction-box ul{
+  list-style-type: none;
+  /* text-align: center; */
+}
+
+.user-reaction-box ul li{
+  display: inline-block;
+  text-align: center;
+  width: 80px;
+  border-radius: 20px;
+  border: 1px solid;
+  padding: 5px 0;
+  margin: 10px 5px;
+  vertical-align: middle;
+  background: rgba(254, 255, 255, 0.5);
+  font-weight: bold;
+  color:rgb(7, 7, 7);
+  cursor: pointer;
+}
+
+.user-reaction-box ul li:hover{
+  background-color: rgba(187, 187, 187, 0.2);
+}
+
+/* Canvas-Style
+----------------------------------------------- */
 #container{
   text-align: center;
 }
 
+#bus-map{
+  width: 100%;
+}
 
+
+/* FOOTER
+----------------------------------------------- */
 .btn-box{
   text-align: center;
   display: flex;
   background-color: rgba(96, 153, 240, 0.664);
-  padding: 2% 0;
+  padding: 10px 0;
+  position: fixed; /* フッターを固定する */
+  bottom: 0; /* 上部から配置の基準位置を決める */
+  left: 0; /* 左から配置の基準位置を決める */
 }
 
 .btn{
@@ -87,30 +137,20 @@
   box-shadow: 2px 2px 2px 0 #bbbbbb, 0px 0px 10px 0 #e4e4e4;
 }
 
-.user-reaction-box{
-  text-align: center;
+
+/* デスクトップ用
+----------------------------------------------- */
+@media (min-width: 500px) {
+  #bus-map{
+    width: 450px;
+  }
 }
 
-.user-reaction-box ul{
-  list-style-type: none;
-  /* text-align: center; */
-}
-
-.user-reaction-box ul li{
-  display: inline-block;
-  text-align: center;
-  width: 100px;
-  border-radius: 20px;
-  border: 1px solid;
-  padding: 10px 0;
-  margin: 10px;
-  vertical-align: middle;
-  background: rgba(254, 255, 255, 0.5);
-  font-weight: bold;
-  color:rgb(7, 7, 7);
-  cursor: pointer;
-}
-
-.user-reaction-box ul li:hover{
-  background-color: rgba(187, 187, 187, 0.2);
+@media (min-width: 600px){
+  .user-reaction-box ul li{
+    width: 100px;
+    margin: 10px;
+    padding: 10px 0;
+    font-size: 1em;
+  }
 }
