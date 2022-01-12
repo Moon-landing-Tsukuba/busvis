@@ -15,7 +15,17 @@ document.querySelector(".switch-left-right").addEventListener("click",(event)=>{
         administrator.direction = false;// alert("left");
       }
       decide_timetable(administrator);
-      console.log(administrator);
+      //console.log(administrator);
+})
+
+document.querySelector(".switch").addEventListener("click",(event)=>{
+  event.target.classList.toggle("go")
+  if(event.target.classList.contains("go")){
+    administrator.mode = !administrator.mode;
+  }else{
+    administrator.mode = !administrator.mode;
+  }
+  //console.log(administrator);
 })
 
 
@@ -28,7 +38,7 @@ document.querySelector(".switch-holiday-weekday").addEventListener("click",(even
     administrator.holiday = true;// alert("holiday = true");
   }
   decide_timetable(administrator);
-  console.log(administrator);
+  //console.log(administrator);
 })
 
 document.querySelector(".btn2").addEventListener('click', function(e){
@@ -63,6 +73,16 @@ const holiday_list = [
   '2022-11-23',
 ]
 
+const administrator = {
+  direction : true, //右回りならTrue
+  user_station : 3, //バス停の識別IDが入る
+  mode : false,
+  target_table :[],
+  buses : [],
+  holiday : false, //休日ならばtrue
+  selected_bus_id : 1,
+};
+
 const bus_stop_positions = make_position(); //canvas上の位置
 
 let stops = [];
@@ -85,6 +105,7 @@ var ctx = cvs.getContext("2d");
 *Admin : 
 -------------------------------------------*/
 
+
 function Bus(id) {
   var me = this;
   this.id = id;
@@ -104,6 +125,7 @@ function Bus(id) {
       ctx.lineWidth = w/250;
       ctx.beginPath();
       ctx.fillStyle = "#ff3";
+      if(administrator.selected_bus_id == id)ctx.fillStyle = "#f3f";
       ctx.strokeStyle = "#000";
       ctx.moveTo(x-this.size/2, y-this.size/2);
       ctx.lineTo(x+this.size/2, y-this.size/2);
@@ -113,17 +135,21 @@ function Bus(id) {
       ctx.fill();
       ctx.stroke();
   };   
-  window.addEventListener("mousedown", function(e) {
-    var dx = x- e.layerX;
-    var dy = y - e.layerY;
-    // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
-    me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
-    // console.log(me.is_clicked);
-    if (me.is_clicked) {
-      administrator.user_station = id;
-    }
-    administrator.mode=true;
-  }); 
+  if(administrator.mode){
+    window.addEventListener("mousedown", function(e) {
+      var dx = me.position_x- e.layerX;
+      var dy = me.position_y - e.layerY;
+      console.log("pos::"+me.position_x);
+      //console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
+      me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
+      //console.log(me.is_clicked);
+      if (me.is_clicked) {
+       administrator.selected_bus_id = me.id;
+       console.log(administrator.selected_bus_id);
+      }
+
+    }); 
+  }
   
 }
 
@@ -157,28 +183,24 @@ function Stop(id) {
       }
 
   };
-  window.addEventListener("mousedown", function(e) {
-    var dx = x - e.layerX;
-    var dy = y - e.layerY;
-    // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
-    me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
-    // console.log(me.is_clicked);
-    if (me.is_clicked) {
-      administrator.user_station = id;
-    }
-    administrator.mode=true;
-  });
+  if(administrator.mode == false){
+    window.addEventListener("mousedown", function(e) {
+      var dx = x - e.layerX;
+      var dy = y - e.layerY;
+      // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
+      me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
+      // console.log(me.is_clicked);
+      if (me.is_clicked&&!administrator.mode) {
+        console.log(me.is_clicked)
+        administrator.user_station = id;
+        administrator.mode = true;
+      }
+      
+    });
+  }
 }
 
-const administrator = {
-  direction : true, //右回りならTrue
-  user_station : 3, //バス停の識別IDが入る
-  mode : false,
-  target_table :[],
-  buses : [],
-  holiday : false, //休日ならばtrue
-  selected_bus_id : 1,
-};
+
 
 
 
@@ -283,12 +305,10 @@ function calc_pos(admin){
   admin.buses.forEach(function(bus, index){
     const total_time = bus.end_time - bus.start_time;
     const propotion = (now - bus.start_time) / total_time/0.6;
-    console.log("prop::"+propotion);
     const start_stop = stopps[bus.start_stop];
     const end_stop = stopps[bus.end_stop];
     const x = start_stop[0]+(end_stop[0]-start_stop[0])*propotion; // <-- ここマイナスとかあるからもう少し考えた方が
     const y = start_stop[1]+(end_stop[1]-start_stop[1])*propotion; //     良さげ。
-    console.log("x::"+y);
     bus.position_x = x;
     bus.position_y = y;
   });
@@ -302,7 +322,7 @@ function calc_remaining_time(adm){
     userStation = timetable[0].length-userStation-1; 
     if(userStation == 28)userStation = 0;
   }
-  console.log(userStation);
+  //console.log(userStation);
   const buses = adm.buses;
   var arrivalTime;
   var tgt;
@@ -393,31 +413,32 @@ function map_draw(){
 function render() {
   // console.log(administrator);
   ctx.clearRect(0, 0, w, h);
-  if(administrator.mode)map_draw();
 
-
-  //停留所インスタンスの生成
-  for (var i=0; i<bus_stop_num; i++){
-      stops[i].draw(ctx);
-  }
 
   check_table();
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
   calc_pos(administrator);
   [remaining_times,departure_times] = calc_remaining_time(administrator);
-
-  
-  ctx.fillStyle= "black";
-  ctx.font = "italic bold 5pt sans-serif";
-  const rem =remaining_times[0];
-  const dep =departure_times[0];
-  ctx.fillText(dep, w/2-5*rem.length,h/2-20);
-  ctx.fillText(rem, w/2-5*rem.length,h/2);
-  // console.log(administrator);
+  //console.log(administrator);
+  if(administrator.mode)map_draw();
   administrator.buses.forEach(function(bus, index){
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
+
+  //停留所インスタンスの生成
+  for (var i=0; i<bus_stop_num; i++){
+      stops[i].draw(ctx);
+  }
+  
+  ctx.fillStyle= "black";
+  ctx.font = "italic bold 5pt sans-serif";
+  const rem =remaining_times[administrator.selected_bus_id];
+  const dep =departure_times[administrator.selected_bus_id];
+  ctx.fillText(dep, w/2-5*rem.length,h/2-20);
+  ctx.fillText(rem, w/2-5*rem.length,h/2);
+  // console.log(administrator);
+
 }
 
 function zfill(NUM, LEN){
