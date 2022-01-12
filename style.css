@@ -37,12 +37,14 @@
 .switch-left-right::before{
   content: "左";
 }
-
+.switch::before{
+  content: "バス";
+}
 .switch-holiday-weekday::before{
   content: "休";
 }
 
-.on , .weekday{
+.on , .go , .weekday{
   background: #9fc9f0;
   /* box-shadow: unset; */
 }
@@ -52,9 +54,19 @@
   box-shadow: 2px 2px 2px 0 #bbbbbb, 0px 0px 10px 0 #e4e4e4;
 }
 
+.go::before{
+  content: "バス停";
+  margin-left: 40%;
+  box-shadow: 2px 2px 2px 0 #bbbbbb, 0px 0px 10px 0 #e4e4e4;
+}
+
+
+
 .weekday::before{
   content: "平";
   margin-left: 40%;
   box-shadow: 2px 2px 2px 0 #bbbbbb, 0px 0px 10px 0 #e4e4e4;
 }
+
+
 
