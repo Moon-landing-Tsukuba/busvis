@@ -11,6 +11,7 @@ const administrator = {
   correct_holiday : false,
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
+  selected_bus_id : 1,
 };
 
 /*-------------------------------------------
@@ -148,6 +149,7 @@ console.log(cvs.clientWidth);
 -------------------------------------------*/
 
 function Bus(id) {
+  var me = this;
   this.id = id;
   this.timetable = [];
   this.start_stop = 0;
@@ -158,11 +160,17 @@ function Bus(id) {
   this.position_x = 0;
   this.position_y = 0;
   this.size = w / 50 * 3;
+  this.is_clicked = false;
 
   this.draw = function (ctx, x, y) {
     ctx.lineWidth = w / 250;
     ctx.beginPath();
-    ctx.fillStyle = "#ff3";
+    
+    if(administrator.selected_bus_id === me.id){
+      ctx.fillStyle = "#ffff80";
+    }else{
+      ctx.fillStyle = "#ff3";
+    }
     ctx.strokeStyle = "#000";
     ctx.moveTo(x - this.size / 2, y - this.size / 2);
     ctx.lineTo(x + this.size / 2, y - this.size / 2);
@@ -172,6 +180,22 @@ function Bus(id) {
     ctx.fill();
     ctx.stroke();
   };
+
+  window.addEventListener("mousedown", function (e) {
+    var dx = me.position_x - e.layerX;
+    var dy = me.position_y - e.layerY;
+    me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
+    if (administrator.bus_select_mode){  //バス変更ボタンが押されている＆どこかのバスがクリックされたら切り替え
+      if (me.is_clicked) {
+        if(administrator.buses.length >= 2){
+          console.log("bus clicked");
+          administrator.selected_bus_id = me.id;
+          administrator.bus_select_mode = false;
+          document.querySelector(".change-bus").classList.remove("on-bus");
+        }
+      }
+    }
+  });
 }
 
 function Stop(id) {
