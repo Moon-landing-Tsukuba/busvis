@@ -9,7 +9,8 @@ const administrator = {
   buses: [],
   holiday: false, //休日ならばtrue
   correct_holiday : false,
-  bus_stop_select_mode : false,
+  bus_stop_select_mode : false, //バス停選択時true
+  bus_select_mode : false, //バス選択時true
 };
 
 /*-------------------------------------------
@@ -70,6 +71,16 @@ document.querySelector(".change-bus-stop").addEventListener("click", (event) => 
     administrator.bus_stop_select_mode = true;// alert("bus_stop_select_mode = true");
   } else {
     administrator.bus_stop_select_mode = false;// alert("bus_stop_select_mode = false");
+  }
+  console.log(administrator);
+})
+
+document.querySelector(".change-bus").addEventListener("click", (event) => {
+  event.target.classList.toggle("on-bus")
+  if (event.target.classList.contains("on-bus")) {
+    administrator.bus_select_mode = true;// alert("bus_select_mode = true");
+  } else {
+    administrator.bus_select_mode = false;// alert("bus_select_mode = false");
   }
   console.log(administrator);
 })

@@ -82,6 +82,10 @@
   left: 0; /* 左から配置の基準位置を決める */
 }
 
+.btn-container{
+  margin: 0 auto;
+}
+
 .btn{
   cursor: pointer;
   margin: 0 auto;
@@ -140,25 +144,38 @@
 
 /* バス停変更ボタン
 ----------------------------------------------- */
-.change-bus-stop{
+.btn2{
   font-weight: bold;
   font-size: small;
-  background-color: #fff;
+  background-color: rgb(159, 201, 240);
 }
 
-.change-bus-stop::before{
-  content: "バス停";
+.btn2::before{
+  content: "";
   position: absolute;
   left: 10%;
   top: 15%;
   font-weight: bold;
-  color: #5c5c5c;
+  color: #383838;
 }
 
-.on-stop{
+.change-bus-stop::before{
+  content: "バス停";
+}
+
+.change-bus::before{
+  content: "バス";
+  left: 25%;
+}
+
+.on-stop, .on-bus{
   background-color: rgb(3, 221, 250);
   color: #000000;
 }
+
+/* バス変更ボタン
+----------------------------------------------- */
+
 
 
 /* デスクトップ用
