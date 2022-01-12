@@ -1,11 +1,19 @@
 /*-------------------------------------------
-*変数定義パート
-*bus_stop_num : バス停の数
-*bus_stop_names : 各バス停の名前
-*bus_stop_positions : バス停の位置情報を格納
-*timetable : バスの時刻表(仮)
-*stops : バス停インスタンス <-- render部分で毎回新たに生み出すのが無駄であるため
-*ctx : Canvasの描画部
+*管理クラスAdministrator
+-------------------------------------------*/
+
+const administrator = {
+  direction: true, //右回りならTrue
+  user_station: 3, //バス停の識別IDが入る
+  target_table: [],
+  buses: [],
+  holiday: false, //休日ならばtrue
+  correct_holiday : false,
+  bus_stop_select_mode : false,
+};
+
+/*-------------------------------------------
+*ボタンクリック等のイベント
 -------------------------------------------*/
 document.querySelector(".switch-left-right").addEventListener("click", (event) => {
   event.target.classList.toggle("on")
@@ -56,6 +64,26 @@ reactions.forEach(reaction => {
   });
 })
 
+document.querySelector(".change-bus-stop").addEventListener("click", (event) => {
+  event.target.classList.toggle("on-stop")
+  if (event.target.classList.contains("on-stop")) {
+    administrator.bus_stop_select_mode = true;// alert("bus_stop_select_mode = true");
+  } else {
+    administrator.bus_stop_select_mode = false;// alert("bus_stop_select_mode = false");
+  }
+  console.log(administrator);
+})
+
+
+/*-------------------------------------------
+*変数定義パート
+*bus_stop_num : バス停の数
+*bus_stop_names : 各バス停の名前
+*bus_stop_positions : バス停の位置情報を格納
+*timetable : バスの時刻表(仮)
+*stops : バス停インスタンス <-- render部分で毎回新たに生み出すのが無駄であるため
+*ctx : Canvasの描画部
+-------------------------------------------*/
 
 const bus_stop_num = 28;
 
@@ -142,66 +170,78 @@ function Stop(id) {
   this.size = w / 50;
   this.remaining_time = 0;
   this.is_clicked = false;
+  this.name = bus_stop_names[id];
+  this.change_color = "yellow"; //バス停変更ボタンが押された場合の色
+  this.selected_color = "red"; //ユーザーが選択しているバス停の色
+  this.default_color = "#3f3"; //デフォルトのバス停の色
+  this.stroke_color = "#000"; //バス停のstrokeStyleの色
 
   this.draw = function (ctx) {
     ctx.lineWidth = w / 250;
     ctx.beginPath();
-    if (administrator.user_station === id) {
-      ctx.fillStyle = "red";
-    } else {
-      ctx.fillStyle = "#3f3";
+    if(administrator.bus_stop_select_mode){ //バス停選択ボタンが押されている場合、バス停の色を変える。
+      ctx.fillStyle = me.change_color;
+      if (administrator.user_station === id) {
+        ctx.fillStyle = me.selected_color;
+      }
+    }else{
+      if (administrator.user_station === id) {
+        ctx.fillStyle = me.selected_color;
+      } else {
+        ctx.fillStyle = me.default_color;
+      }
     }
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = me.stroke_color;
     // console.log(me.size);
     ctx.moveTo(x + me.size, y);
     ctx.arc(x, y, me.size, 0, 2 * Math.PI, true);
     ctx.fill();
     ctx.stroke();
-  };
 
+    if(administrator.bus_stop_select_mode){
+      ctx.fillStyle = "black";
+      ctx.font = "italic bold 10pt sans-serif";
+      ctx.fillText(me.name, x, y);
+      ctx.stroke();
+    }
+  };
+  
   window.addEventListener("mousedown", function (e) {
     var dx = x - e.layerX;
     var dy = y - e.layerY;
-    // console.log(e.layerX, e.layerY, dx, dy, Math.sqrt(dx * dx + dy * dy), me.size);
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
-    // console.log(me.is_clicked);
-    if (me.is_clicked) {
-      administrator.user_station = id;
+    if(administrator.bus_stop_select_mode){  //バス停変更ボタンが押されている＆どこかのバス停がクリックされたら切り替え
+      if (me.is_clicked) {
+        administrator.user_station = me.id;
+        administrator.bus_stop_select_mode = false;
+        document.querySelector(".change-bus-stop").classList.remove("on-stop");
 
-      let direction;
-      if (administrator.direction) {
-        direction = 'rights';
-      } else {
-        direction = 'lefts';
-      }
+        // -----------Ajaxを記述. バスの遅延時間を取得.---------
+        // let direction;
+        // if (administrator.direction) {
+        //   direction = 'rights';
+        // } else {
+        //   direction = 'lefts';
+        // }
 
-      //Ajaxを記述。 バスの遅延時間を取得する。
-      var req = new XMLHttpRequest();
-      req.open('POST', 'index.php', true);
-      req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      req.send("id=" + administrator.user_station + "&direction=" + direction);
-      req.onreadystatechange = function () {
-        var result = document.getElementById('result');
-        if (req.readyState == 4) { // 通信の完了時
-          if (req.status == 200) { // 通信の成功時
-            result.innerHTML = req.responseText;
-          }
-        } else {
-          result.innerHTML = "通信中...";
-        }
+        // var req = new XMLHttpRequest();
+        // req.open('POST', 'index.php', true);
+        // req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // req.send("id=" + administrator.user_station + "&direction=" + direction);
+        // req.onreadystatechange = function () {
+        //   var result = document.getElementById('result');
+        //   if (req.readyState == 4) { // 通信の完了時
+        //     if (req.status == 200) { // 通信の成功時
+        //       result.innerHTML = req.responseText;
+        //     }
+        //   } else {
+        //     result.innerHTML = "通信中...";
+        //   }
+        // }
       }
     }
   });
 }
-
-const administrator = {
-  direction: true, //右回りならTrue
-  user_station: 3, //バス停の識別IDが入る
-  target_table: [],
-  buses: [],
-  holiday: false, //休日ならばtrue
-  correct_holiday : false,
-};
 
 
 
@@ -408,19 +448,21 @@ function render() {
   ctx.clearRect(0, 0, w, h);
 
   //map
-  var r = h / 10
-  ctx.lineWidth = w / 50;
-  ctx.strokeStyle = "#000";
-  ctx.beginPath();
-  ctx.moveTo(w / 2 - h / 5, h - 2 * h / 10);
-  ctx.lineTo(w / 2 - h / 5, h / 10);
-  //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
-  //開始角は3時の方角で時計回り
-  // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
-  ctx.lineTo(w / 2 + h / 5, h / 10);
-  ctx.lineTo(w / 2 + h / 5, h - 2 * h / 10);
-  ctx.lineTo(w / 2 - h / 5, h - 2 * h / 10);
-  ctx.stroke();
+  if(!administrator.bus_stop_select_mode){
+    var r = h / 10
+    ctx.lineWidth = w / 50;
+    ctx.strokeStyle = "#000";
+    ctx.beginPath();
+    ctx.moveTo(w / 2 - h / 5, h - 2 * h / 10);
+    ctx.lineTo(w / 2 - h / 5, h / 10);
+    //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
+    //開始角は3時の方角で時計回り
+    // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
+    ctx.lineTo(w / 2 + h / 5, h / 10);
+    ctx.lineTo(w / 2 + h / 5, h - 2 * h / 10);
+    ctx.lineTo(w / 2 - h / 5, h - 2 * h / 10);
+    ctx.stroke();
+  }
 
   //停留所インスタンスの生成
   for (var i = 0; i < bus_stop_num; i++) {

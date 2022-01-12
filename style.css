@@ -146,12 +146,18 @@
   background-color: #fff;
 }
 
-.change-bus-stop > span{
+.change-bus-stop::before{
+  content: "バス停";
   position: absolute;
   left: 10%;
   top: 15%;
   font-weight: bold;
   color: #5c5c5c;
+}
+
+.on-stop{
+  background-color: rgb(3, 221, 250);
+  color: #000000;
 }
 
 
