@@ -4,7 +4,7 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 3, //バス停の識別IDが入る
+  user_station: 0, //バス停の識別IDが入る
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
@@ -99,8 +99,8 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
 
 const bus_stop_num = 28;
 
-const bus_stop_names = ["つくばセンター", "吾妻小学校前", "筑波大学春日キャンパス", "筑波メディカルセンター前", "筑波大学病院入口", "追越学生宿舎前", "平砂学生宿舎前", "筑波大学西", "大学会館前", "第一エリア前", "第三エリア前", "陸域環境研究センター前", "農林技術センター前", "一の矢学生宿舎前", "大学植物見本園", "TARAセンター前", "筑波大学中央", "大学公演", "松実池", "天久保三丁目", "合宿所", "天久保池", "天久保二丁目", "追越宿舎東", "筑波メディカルセンター病院", "筑波メディカルセンター前", "筑波大学春日キャンパス", "吾妻小学校前", "つくばセンター"]
-const bus_stop_latlng = [[36.082537, 140.112707], [36.085158, 140.109299], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [36.108121, 140.104282], [36.106372, 140.105679], [36.103688, 140.106732], [36.100184, 140.105618], [36.097574, 140.106049], [36.094516, 140.106743], [36.092658, 140.106397]]
+const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公園","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
+const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[36.087872, 140.107274],[36.090369, 140.105539],[36.093142, 140.103876],[36.095351, 140.102961],[36.097729, 140.102154],[36.103252, 140.101509],[36.104838, 140.101194],[36.107915, 140.099888],[36.110122, 140.098603],[36.114711, 140.096923],[36.118348, 140.096042],[36.119404, 140.099170],[36.116047, 140.102103],[36.113164, 140.102179],[36.111278, 140.103595],[36.109826, 140.104035],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
 let timetable = timetable_list[0]
 
@@ -288,6 +288,7 @@ function Stop(id) {
 *calc_bus_param : 運行中のバス情報をインスタンスに反映させる
 *calc_pos : administratorの中の各バスが「画面上の」どこに居るかを計算
 *calc_remaining_time : あと何分でユーザーが選択したバス停にバスインスタンスが到着するのかを計算
+*calc_nearest_stop : 現在地から一番近いバス停を計算する。
 *decide_timetable : adiministratorのholidayとdirectionの値からtimetableを決定する。
 *check_holiday : 祝日または休日ならadministratorのholidayをtrueとする関数。
 *render : 描画関数
@@ -445,6 +446,24 @@ function calc_remaining_time(adm) {
   return [remaining_times,departure_times];
 }
 
+function calc_nearest_stop(lat, lng) {
+  var min_dist;
+  var min_dist_index;
+  for (var i=0; i<bus_stop_num-3; i++) {
+    var dx = lat - bus_stop_latlng[i][0];
+    var dy = lng - bus_stop_latlng[i][1];
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    if (i === 0) {
+      min_dist = dist
+      min_dist_index = 0;
+    } else if (min_dist > dist) {
+      min_dist = dist
+      min_dist_index = i;
+    }
+  }
+  console.log(min_dist_index);
+  return min_dist_index;
+}
 
 function decide_timetable(adm) {
   if (adm.direction && !adm.holiday) { //平日・右回り// alert("平日・右回り");
@@ -551,13 +570,6 @@ function make_position() {
 
 const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
 
-
-function displayData(lat, lng, accu) {
-  var txt = document.getElementById("gps");       // データを表示するdiv要素の取得
-  txt.innerHTML = "緯度, 経度: " + lat + ", " + lng + "<br>"  // データ表示
-    + "精度: " + accu;
-}
-
 /*-------------------------------------------
 *実行パート
 -------------------------------------------*/
@@ -578,8 +590,7 @@ setInterval(render, 30);
 navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得
   var lng = position.coords.longitude;           // 経度を取得
-  var accu = position.coords.accuracy;            // 緯度・経度の精度を取得
-  displayData(lat, lng, accu);                    // displayData 関数を実行
+  administrator.user_station = calc_nearest_stop(lat, lng);
 }, (error) => {                                     // エラー処理（今回は特に何もしない）
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
