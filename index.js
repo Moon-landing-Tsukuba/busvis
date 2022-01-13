@@ -123,14 +123,19 @@ const holiday_list = [
   '2022-11-23',
 ]
 
+var container = document.getElementById("user-reaction");
 var cvs = document.getElementById("bus-map");
-const w = cvs.clientWidth;
-const h = w;
+var view_size = is_smart_phone() ? get_screen_size() : get_page_size();
+var top_infos_margin = container.clientHeight;
+const bottom_buttons_margin = 50;
+var w = view_size[0] < 500 ? view_size[0] : 500;
+var h = view_size[1] - top_infos_margin - bottom_buttons_margin;
 cvs.width = w;
 cvs.height = h;
+// console.log(view_size);
 var ctx = cvs.getContext("2d");
 
-const bus_stop_positions = make_position(); //canvas上の位置
+var bus_stop_positions = make_position(); //canvas上の位置
 
 let stops = [];
 for (i = 0; i < bus_stop_num; i++) {
@@ -201,7 +206,7 @@ function Stop(id) {
   var me = this;
   var [x, y] = bus_stop_positions[id];
   this.id = id;
-  this.size = w / 50;
+  this.size = w / 30;
   this.remaining_time = 0;
   this.is_clicked = false;
   this.name = bus_stop_names[id];
@@ -211,7 +216,9 @@ function Stop(id) {
   this.stroke_color = "#000"; //バス停のstrokeStyleの色
 
   this.draw = function (ctx) {
-    ctx.lineWidth = w / 250;
+    [x, y] = bus_stop_positions[id];
+    me.size = w / 30;
+    ctx.lineWidth = w / 150;
     ctx.beginPath();
     if(administrator.bus_stop_select_mode){ //バス停選択ボタンが押されている場合、バス停の色を変える。
       ctx.fillStyle = me.change_color;
@@ -291,6 +298,9 @@ function Stop(id) {
 *calc_nearest_stop : 現在地から一番近いバス停を計算する。
 *decide_timetable : adiministratorのholidayとdirectionの値からtimetableを決定する。
 *check_holiday : 祝日または休日ならadministratorのholidayをtrueとする関数。
+*get_screen_size : 画面サイズを取得。
+*get_page_size : ページサイズ（htmlが表示されている部分のサイズ）を取得。
+*is_smart_phone : スマートフォンかどうか調べる関数。
 *render : 描画関数
 ------------------------------------------*/
 function load_now() {
@@ -496,24 +506,49 @@ function check_holiday() {
   }
 }
 
+function get_screen_size() {
+  const screen_size = []
+	screen_size.push(window.parent.screen.width);
+  screen_size.push(window.parent.screen.height);
+  return screen_size;
+}
+
+function get_page_size() {
+  const page_size = []
+	page_size.push(document.documentElement.clientWidth);
+  page_size.push(document.documentElement.clientHeight);
+  return page_size;
+}
+
+function is_smart_phone() {
+  if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function render() {
   // console.log(administrator);
   ctx.clearRect(0, 0, w, h);
 
   //map
   if(!administrator.bus_stop_select_mode){
-    var r = h / 10
-    ctx.lineWidth = w / 50;
+    const left_bottom_pos = bus_stop_positions[0];
+    const left_top_pos = bus_stop_positions[10];
+    const right_bottom_pos = bus_stop_positions[14];
+    const right_top_pos = bus_stop_positions[24];
+    ctx.lineWidth = w / 40;
     ctx.strokeStyle = "#000";
     ctx.beginPath();
-    ctx.moveTo(w / 2 - h / 5, h - 2 * h / 10);
-    ctx.lineTo(w / 2 - h / 5, h / 10);
+    ctx.moveTo(left_bottom_pos[0], left_bottom_pos[1]);
+    ctx.lineTo(left_top_pos[0], left_top_pos[1]);
     //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
     //開始角は3時の方角で時計回り
     // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
-    ctx.lineTo(w / 2 + h / 5, h / 10);
-    ctx.lineTo(w / 2 + h / 5, h - 2 * h / 10);
-    ctx.lineTo(w / 2 - h / 5, h - 2 * h / 10);
+    ctx.lineTo(right_bottom_pos[0], right_bottom_pos[1]);
+    ctx.lineTo(right_top_pos[0], right_top_pos[1]);
+    ctx.closePath();
     ctx.stroke();
   }
 
@@ -531,10 +566,6 @@ function render() {
 
   ctx.fillStyle = "black";
   ctx.font = "italic bold 5pt sans-serif";
-  const rem =remaining_times[0];
-  const dep =departure_times[0];
-  ctx.fillText(dep, w/2-5*rem.length,h/2-20);
-  ctx.fillText(rem, w/2-5*rem.length,h/2);
 
   administrator.buses.forEach(function (bus, index) {
     bus.draw(ctx, bus.position_x, bus.position_y);
@@ -547,20 +578,30 @@ function zfill(NUM, LEN) {
 
 function make_position() {
   const positions = [];
+  const w_centor = w / 2;
+  // const y_centor = h / 2;
+  const diviser = 10;
+  const map_w = w / 2;
+  const map_h = h / diviser * (diviser-1);
+  // console.log(map_h, top_infos_margin, bottom_buttons_margin);
+  const w_left = w_centor - map_w / 2 ;
+  const w_right = w_left + map_w ;
+  const y_top = h / (diviser*2);
+  const y_bottom = y_top + map_h;
   for (var i = 0; i < 29; i++) {
     var pos = [0, 0];
     if (i < 11) {
-      pos[0] = w / 2 - h / 5;  
-      pos[1] = h - 2 * h / 10 - 3.5 * h / 50 * i;
+      pos[0] = w_left;  
+      pos[1] = y_bottom - (map_h/10)*i;
     } else if (i < 14) {
-      pos[0] = w / 2 - h / 10 + h / 10 * (i - 11);
-      pos[1] = h / 10;
+      pos[0] = w_left + (map_w/4)*(i-10);
+      pos[1] = y_top;
     } else if (i < 25) {
-      pos[0] = w / 2 + h / 5
-      pos[1] = 2 * h / 10 - 3 / 100 * h + 3.5 * h / 50 * (i - 15);
+      pos[0] = w_right;
+      pos[1] = y_top + (map_h/10)*(i-14);
     } else {
-      pos[0] = w / 2 + h / 10 - h / 10 * (i - 25);
-      pos[1] = h - 2 * h / 10;
+      pos[0] = w_right - (map_w/4)*(i-24);
+      pos[1] = y_bottom;
     }
     positions.push(pos);
   }
@@ -595,3 +636,16 @@ navigator.geolocation.watchPosition((position) => {
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
 });
+
+window.onresize = function(){
+  top_infos_margin = container.clientHeight;
+  view_size = is_smart_phone() ? get_screen_size() : get_page_size();
+  w = view_size[0] < 500 ? view_size[0] : 500;
+  h = view_size[1] - top_infos_margin - bottom_buttons_margin;
+  // console.log(h, top_infos_margin, bottom_buttons_margin);
+  cvs.width = w;
+  cvs.height = h;
+  // console.log(w, h);
+  bus_stop_positions = make_position();
+  render()
+}
