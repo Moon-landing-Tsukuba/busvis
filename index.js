@@ -163,21 +163,23 @@ function Bus(id) {
 
   this.draw = function (ctx, x, y) {
     ctx.lineWidth = w / 250;
-    ctx.beginPath();
     
     if(administrator.selected_bus_id === me.id){
-      ctx.fillStyle = "#FF3200";
+      ctx.fillStyle = "#FF5F76";
     }else{
-      ctx.fillStyle = "#ffff80";
+      ctx.fillStyle = "#32A9C2";
     }
-    ctx.strokeStyle = "#000";
-    ctx.moveTo(x - this.size / 2, y - this.size / 2);
-    ctx.lineTo(x + this.size / 2, y - this.size / 2);
-    ctx.lineTo(x + this.size / 2, y + this.size / 2);
-    ctx.lineTo(x - this.size / 2, y + this.size / 2);
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#fff";
+    ctx.moveTo(x - this.size / 3, y - this.size / 3);
+    ctx.lineTo(x + this.size / 3, y - this.size / 3);
+    ctx.lineTo(x + this.size / 3, y + this.size / 3);
+    ctx.lineTo(x - this.size / 3, y + this.size / 3);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+    
   };
 
   window.addEventListener("mousedown", function (e) {
@@ -205,10 +207,10 @@ function Stop(id) {
   this.remaining_time = 0;
   this.is_clicked = false;
   this.name = bus_stop_names[id];
-  this.change_color = "yellow"; //バス停変更ボタンが押された場合の色
-  this.selected_color = "red"; //ユーザーが選択しているバス停の色
-  this.default_color = "#3f3"; //デフォルトのバス停の色
-  this.stroke_color = "#000"; //バス停のstrokeStyleの色
+  this.change_color = "#32A9C2"; //バス停変更ボタンが押された場合の色
+  this.selected_color = "#FF5F76"; //ユーザーが選択しているバス停の色
+  this.default_color = "#fff"; //デフォルトのバス停の色
+  this.stroke_color = "#32A9C2"; //バス停のstrokeStyleの色
 
   this.draw = function (ctx) {
     ctx.lineWidth = w / 250;
@@ -485,7 +487,7 @@ function render() {
   if(!administrator.bus_stop_select_mode){
     var r = h / 10
     ctx.lineWidth = w / 50;
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = "#32A9C2";
     ctx.beginPath();
     ctx.moveTo(w / 2 - h / 5, h - 2 * h / 10);
     ctx.lineTo(w / 2 - h / 5, h / 10);
