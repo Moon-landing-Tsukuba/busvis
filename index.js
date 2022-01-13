@@ -12,6 +12,7 @@ const administrator = {
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
   selected_bus_id : 1,
+  next_timetable : []
 };
 
 /*-------------------------------------------
@@ -308,19 +309,42 @@ function check_table() {
     if (timetable[i][0] <= now && now <= timetable[i][27]) {
       table.push(timetable[i]);
     }
+    else if(timetable[i][27] < now && now < timetable[i+1][0]){
+      administrator.next_timetable = timetable[i+1];
+    }
+    else{
+      administrator.next_timetable = timetable[0];
+    }
   }
+  
   administrator.target_table = table;
 }
 
 function create_buses(tm) {  //tm : administrater.target_table
   const buses = [];
+  var ID = timetable.length;
   tm.forEach(function (value, index) {
-    const bus = new Bus(index);
+    
+    for(var i = 0;i < timetable.length;i++){
+      if(timetable[i][0] == value[0]){
+      ID = i;
+      break;
+      }
+    }
+
+    const bus = new Bus(ID);
+
     bus.timetable = value;
     buses.push(bus);
   });
   administrator.buses = buses;
+  if (timetable.length == ID){
+    administrator.next_timetable = timetable[0];
+  }else{
+    administrator.next_timetable = timetable[ID+1];
+  }
 }
+
 
 // この関数はバスのパラメーターを時々刻々と更新しているので、render関数内で実行する必要がありそう。
 function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
@@ -443,6 +467,36 @@ function calc_remaining_time(adm) {
 
   }
   return [remaining_times,departure_times];
+}
+
+function calc_remaining_time(adm){
+  const now = load_now();
+  const userStation = adm.user_station;
+  const buses = adm.buses;
+  buses.forEach(function(bus, index){
+    
+    const arrivalTime = bus.timetable[userStation];
+    const now_hour = Math.floor(now/10000);
+    const now_min = Math.floor(now/100) - now_hour*100;
+    const now_sec = now - now_hour*10000 - now_min*100;
+    const tgt_hour = Math.floor(arrivalTime/10000);
+    const tgt_min = Math.floor(arrivalTime/100) - tgt_hour*100;
+    const tgt_sec = arrivalTime - tgt_hour*10000 - tgt_min*100;
+    const now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
+
+    const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
+    
+    const arrival = tgt_time - now_time;
+    if(arrival < 0){
+      bus.remaining_time = "バス通過";
+      return;
+    }
+    const arrival_min = Math.floor(arrival/60);
+    const arrival_sec = arrival - arrival_min*60;
+
+    // console.log(arrival_min + "分" + arrival_sec + "秒");
+    bus.remaining_time = arrival_min + "分" + arrival_sec + "秒";
+  });
 }
 
 
