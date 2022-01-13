@@ -4,14 +4,16 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 3, //バス停の識別IDが入る
+  user_station: 12, //バス停の識別IDが入る
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
   correct_holiday : false,
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
-  selected_bus_id : 1,
+  selected_bus_id : 100,
+  next_bus : null,
+  remaining_time : 0
 };
 
 /*-------------------------------------------
@@ -186,12 +188,12 @@ function Bus(id) {
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
     if (administrator.bus_select_mode){  //バス変更ボタンが押されている＆どこかのバスがクリックされたら切り替え
       if (me.is_clicked) {
-        if(administrator.buses.length >= 2){
+        //if(administrator.buses.length >= 2){
           console.log("bus clicked");
           administrator.selected_bus_id = me.id;
           administrator.bus_select_mode = false;
           document.querySelector(".change-bus").classList.remove("on-bus");
-        }
+        //}
       }
     }
   });
@@ -308,18 +310,29 @@ function check_table() {
     if (timetable[i][0] <= now && now <= timetable[i][27]) {
       table.push(timetable[i]);
     }
+    
   }
   administrator.target_table = table;
 }
 
 function create_buses(tm) {  //tm : administrater.target_table
   const buses = [];
+  var ID ;
   tm.forEach(function (value, index) {
+    for(var i = 0;i < timetable.length;i++){
+      if(timetable[i][0] == value[0]){
+       ID = i;
+       break;
+      }
+    }
     const bus = new Bus(index);
     bus.timetable = value;
     buses.push(bus);
   });
+  const next_bus =  new Bus(100);
+  next_bus.timetable = timetable[ID+1];
   administrator.buses = buses;
+  administrator.next_bus =next_bus; 
 }
 
 // この関数はバスのパラメーターを時々刻々と更新しているので、render関数内で実行する必要がありそう。
@@ -388,7 +401,7 @@ function calc_pos(admin) {
     bus.position_y = y;
   });
 }
-
+/*
 function calc_remaining_time(adm) {
   const now = load_now();
   let userStation = adm.user_station; //右回りの場合の値
@@ -444,7 +457,55 @@ function calc_remaining_time(adm) {
   }
   return [remaining_times,departure_times];
 }
+*/
+function selected_bus_id_initialized(adm){
+  const userStation = adm.user_station;
+  const buses = adm.buses;
+  buses.forEach(function(bus, index){
+    if(bus.end_stop > userStation){
+      adm.selected_bus_id = bus.id;
+      return;
+    }
+  });
+  adm.selected_bus_id = 100;
+}
+function calc_remaining_time(adm){
+  const now = load_now();
+  const userStation = adm.user_station;
+  const bus_id = adm.selected_bus_id;
+  var bus;
+  if(bus_id == 100)bus = adm.next_bus;
+  else{
+    for(var i = 0;i < adm.buses.length;i++){
+      if(bus_id == adm.buses[i].id){
+        bus = adm.buses[i];
+      }
+    }
+  }
+  const arrivalTime = bus.timetable[userStation];
+  const now_hour = Math.floor(now/10000);
+  const now_min = Math.floor(now/100) - now_hour*100;
+  const now_sec = now - now_hour*10000 - now_min*100;
+  const tgt_hour = Math.floor(arrivalTime/10000);
+  const tgt_min = Math.floor(arrivalTime/100) - tgt_hour*100;
+  const tgt_sec = arrivalTime - tgt_hour*10000 - tgt_min*100;
+  const now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
 
+  const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
+  
+  const arrival = tgt_time - now_time;
+  /*
+  if(arrival < 0){
+    bus.remaining_time = "バス通過";
+    return;
+  }
+  */
+  const arrival_min = Math.floor(arrival/60);
+  const arrival_sec = arrival - arrival_min*60;
+
+  // console.log(arrival_min + "分" + arrival_sec + "秒");
+  adm.remaining_time = arrival_min + "分" + arrival_sec + "秒";
+}
 
 function decide_timetable(adm) {
   if (adm.direction && !adm.holiday) { //平日・右回り// alert("平日・右回り");
@@ -507,19 +568,23 @@ function render() {
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
   calc_pos(administrator);
-  [remaining_times,departure_times] = calc_remaining_time(administrator);
-
+  //[remaining_times,departure_times] = calc_remaining_time(administrator);
+  calc_remaining_time(administrator);
 
   ctx.fillStyle = "black";
   ctx.font = "italic bold 5pt sans-serif";
-  const rem =remaining_times[0];
-  const dep =departure_times[0];
-  ctx.fillText(dep, w/2-5*rem.length,h/2-20);
+  const rem = administrator.remaining_time
+  //const dep =departure_times[0];
+  //ctx.fillText(dep, w/2-5*rem.length,h/2-20);
   ctx.fillText(rem, w/2-5*rem.length,h/2);
 
   administrator.buses.forEach(function (bus, index) {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
+  administrator.next_bus.position_x = w / 2 - h / 4;
+  administrator.next_bus.position_y = h -  2* h / 10;
+  administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);
+  console.log(administrator);
 }
 
 function zfill(NUM, LEN) {
@@ -568,9 +633,9 @@ check_table();
 create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
 calc_pos(administrator);
-
-[remaining_times,departure_times] = calc_remaining_time(administrator);
-
+selected_bus_id_initialized(administrator);
+//[remaining_times,departure_times] = calc_remaining_time(administrator);
+calc_remaining_time(administrator);
 render();
 
 setInterval(render, 30);
