@@ -61,15 +61,12 @@ $lates = getLate($pdo);
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div id="gps">
-            ここにデータを表示
-        </div>
-
-        <div class="btn-box">
-            <div class="btn switch-left-right on"></div>
-            <div class="btn switch-holiday-weekday weekday"></div>
-        </div>
-
+    <header class="page-header wrapper">
+            <p>筑波大学中央</p>
+            <p>あと○○分</p>
+            <p>2分の遅れ予想</p>
+        </header>
+        
         <div class="user-reaction-box">
             <ul>
                 <li class="reaction-item" data-late="0">遅れなし</li>
@@ -78,26 +75,17 @@ $lates = getLate($pdo);
             </ul>
         </div>
 
-        <div id="result">バスの遅延は --> 0 分です</div><!-- このdiv内に整形したデータを非同期で入れる -->
+        <div id="container">
+            <canvas id="bus-map"></canvas>
+        </div>
 
-        <!-- <ul>
-          <?php foreach ($lates as $late): ?>
-            <li>
-              <span>
-                id : <?= htmlspecialchars($late->id); ?>
-                left : <?= htmlspecialchars($late->lefts); ?>
-                right : <?= htmlspecialchars($late->rights); ?>
-              </span>
-            </li>
-          <?php endforeach; ?>
-        </ul> -->
-
-        <p id="helloworld"></p>
-        <p id="testdis"></p>
-        <div id="container"></div>
-        <div>
-            <p id="arrival"></p>
-            <p id="nowtime"></p>
+        <div class="btn-box wrapper">
+            <div class="btn-container">
+                <div class="btn btn-common switch-left-right on"></div>
+                <div class="btn btn2 change-bus-stop"></div> <!--バス停を変更するボタン-->
+                <div class="btn btn2 change-bus"></div> <!--バスを変更するボタン-->
+                <div class="btn btn-common switch-holiday-weekday weekday"></div>
+            </div>
         </div>
 
         <script src="timetable_list.js"></script>
