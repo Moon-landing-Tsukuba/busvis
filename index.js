@@ -144,8 +144,7 @@ console.log(cvs.clientWidth);
 /*-------------------------------------------
 *オブジェクト定義パート
 *Bus :
-*Stop : 
-*Admin : 
+*Stop :  
 -------------------------------------------*/
 
 function Bus(id) {
@@ -167,9 +166,9 @@ function Bus(id) {
     ctx.beginPath();
     
     if(administrator.selected_bus_id === me.id){
-      ctx.fillStyle = "#ffff80";
+      ctx.fillStyle = "#FF3200";
     }else{
-      ctx.fillStyle = "#ff3";
+      ctx.fillStyle = "#ffff80";
     }
     ctx.strokeStyle = "#000";
     ctx.moveTo(x - this.size / 2, y - this.size / 2);
