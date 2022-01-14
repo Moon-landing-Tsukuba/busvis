@@ -13,7 +13,8 @@ const administrator = {
   bus_select_mode : false, //バス選択時true
   selected_bus_id : 100,
   next_bus : null,
-  remaining_time : 0
+  remaining_time : 0,
+  next_timetable : []
 };
 
 /*-------------------------------------------
@@ -310,22 +311,31 @@ function check_table() {
     if (timetable[i][0] <= now && now <= timetable[i][27]) {
       table.push(timetable[i]);
     }
-    
+    else if(timetable[i][27] < now && now < timetable[i+1][0]){
+      administrator.next_timetable = timetable[i+1];
+    }
+    else{
+      administrator.next_timetable = timetable[0];
+    }
   }
+  
   administrator.target_table = table;
 }
 
 function create_buses(tm) {  //tm : administrater.target_table
   const buses = [];
-  var ID ;
+  var ID = timetable.length;
   tm.forEach(function (value, index) {
+    
     for(var i = 0;i < timetable.length;i++){
       if(timetable[i][0] == value[0]){
-       ID = i;
-       break;
+      ID = i;
+      break;
       }
     }
-    const bus = new Bus(index);
+
+    const bus = new Bus(ID);
+
     bus.timetable = value;
     buses.push(bus);
   });
@@ -333,7 +343,13 @@ function create_buses(tm) {  //tm : administrater.target_table
   next_bus.timetable = timetable[ID+1];
   administrator.buses = buses;
   administrator.next_bus =next_bus; 
+  if (timetable.length == ID){
+    administrator.next_timetable = timetable[0];
+  }else{
+    administrator.next_timetable = timetable[ID+1];
+  }
 }
+
 
 // この関数はバスのパラメーターを時々刻々と更新しているので、render関数内で実行する必要がありそう。
 function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
@@ -469,6 +485,7 @@ function selected_bus_id_initialized(adm){
   });
   adm.selected_bus_id = 100;
 }
+
 function calc_remaining_time(adm){
   const now = load_now();
   const userStation = adm.user_station;
