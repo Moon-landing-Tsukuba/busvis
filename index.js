@@ -4,7 +4,7 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 12, //バス停の識別IDが入る
+  user_station: 18, //バス停の識別IDが入る
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
@@ -86,8 +86,10 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
   event.target.classList.toggle("on-bus")
   if (event.target.classList.contains("on-bus")) {
     administrator.bus_select_mode = true;// alert("bus_select_mode = true");
+    console.log("bus_select_mode = true");
   } else {
     administrator.bus_select_mode = false;// alert("bus_select_mode = false");
+    console.log("bus_select_mode = false");
   }
   console.log(administrator);
 })
@@ -194,12 +196,11 @@ function Bus(id) {
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
     if (administrator.bus_select_mode){  //バス変更ボタンが押されている＆どこかのバスがクリックされたら切り替え
       if (me.is_clicked) {
-        //if(administrator.buses.length >= 2){
-          console.log("bus clicked");
-          administrator.selected_bus_id = me.id;
-          administrator.bus_select_mode = false;
-          document.querySelector(".change-bus").classList.remove("on-bus");
-        //}
+        // console.log("bus clicked and my bus ID is " + me.id);
+        administrator.selected_bus_id = me.id;
+        // console.log("selected_bus_id : " +administrator.selected_bus_id);
+        administrator.bus_select_mode = false;
+        document.querySelector(".change-bus").classList.remove("on-bus");
       }
     }
   });
@@ -350,14 +351,17 @@ function check_table() {
   }
 
   //待機中のバスがなかった場合、翌日の始発をnext_tableとする。
-  if(table.length === 0 && now < timetable[0][0] && timetable[timetable.length - 1][27] < now){ 
+  if(table.length === 0 && (now < timetable[0][0] || timetable[timetable.length - 1][27] < now)){ 
     next_table = timetable[0];
+    // console.log("There is no bus");
   }
 
   administrator.target_table = table;
   administrator.next_timetable = next_table;
 }
+//👆運行中のバスと待機中のバスの時刻表を算出。
 
+//👇バスのインスタンス＋IDを生成。
 function create_buses(tm) {  //tm : administrater.target_table
   const buses = [];
   var ID = timetable.length;
@@ -432,9 +436,9 @@ function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
 }
 
 function calc_pos(admin) {
-  var stopps; // ここ変更が更新されていない。
+  var stopps;
 
-  if (admin.direction) {//おそらくここはバスの左右で条件分岐している。  
+  if (admin.direction) {  
     stopps = bus_stop_positions;
   } else {
     stopps = bus_stop_positions.slice().reverse();
@@ -446,8 +450,8 @@ function calc_pos(admin) {
     const propotion = (now - bus.start_time) / total_time / 0.6;
     const start_stop = stopps[bus.start_stop];
     const end_stop = stopps[bus.end_stop];
-    const x = start_stop[0] + (end_stop[0] - start_stop[0]) * propotion; // <-- ここマイナスとかあるからもう少し考えた方が
-    const y = start_stop[1] + (end_stop[1] - start_stop[1]) * propotion; //     良さげ。
+    const x = start_stop[0] + (end_stop[0] - start_stop[0]) * propotion;
+    const y = start_stop[1] + (end_stop[1] - start_stop[1]) * propotion;
     bus.position_x = x;
     bus.position_y = y;
   });
@@ -486,15 +490,18 @@ function check_holiday() {
 
 function selected_bus_id_initialized(){
   const now = load_now();
-  const userStation = administrator.user_station;
+  let userStation = administrator.user_station;
   const buses = administrator.buses;
   let candidate_time = [];
   let count = 0;
 
-  if(buses.length === 0){
+  if(buses.length === 0){ //バスがなければ待機中のバスがselectされる
     administrator.selected_bus_id = 100;
   }else{
     buses.some(function(value, index){
+      if(!administrator.direction){ //左回りの場合timetableの参照位置に気を付ける
+        userStation = timetable[0].length - userStation - 1;
+      }
       candidate_time.push(value.timetable[userStation]);
     });
 
@@ -517,7 +524,7 @@ function selected_bus_id_initialized(){
 function calc_remaining_time(adm){
   const now = load_now();
   let userStation = adm.user_station;
-  const bus_id = adm.selected_bus_id;
+  let bus_id = adm.selected_bus_id;
   let arrivalTime;
 
   if(!adm.direction){ //左回りの場合の値
@@ -544,12 +551,19 @@ function calc_remaining_time(adm){
 
   const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
   
-  const arrival = tgt_time - now_time;
+  let arrival = tgt_time - now_time;
 
-  const arrival_min = Math.floor(arrival/60);
-  const arrival_sec = arrival - arrival_min*60;
+  if(arrival >= 0){
+    const arrival_min = Math.floor(arrival/60);
+    const arrival_sec = arrival - arrival_min*60;
+    administrator.remaining_time = arrival_min + "分" + arrival_sec + "秒";
+  }else{
+    arrival = arrival * (-1);
+    const arrival_min = Math.floor(arrival/60);
+    const arrival_sec = arrival - arrival_min*60;
+    administrator.remaining_time = "-" + arrival_min + "分" + arrival_sec + "秒";
+  }
 
-  administrator.remaining_time = arrival_min + "分" + arrival_sec + "秒";
 }
 
 
@@ -586,8 +600,11 @@ function render() {
   calc_pos(administrator);
   //[remaining_times,departure_times] = calc_remaining_time(administrator);
   if(administrator.switch){
+    console.log("1 - selected_bus_id : " +administrator.selected_bus_id);
     selected_bus_id_initialized();
     administrator.switch = false;
+    console.log("2 - selected_bus_id : " +administrator.selected_bus_id);
+
   }
   calc_remaining_time(administrator);
 
@@ -656,6 +673,7 @@ calc_pos(administrator);
 selected_bus_id_initialized();
 //[remaining_times,departure_times] = calc_remaining_time(administrator);
 calc_remaining_time(administrator);
+console.log(administrator);
 render();
 
 setInterval(render, 30);
