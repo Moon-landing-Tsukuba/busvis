@@ -468,6 +468,25 @@ function calc_pos(admin) {
   });
 }
 
+function calc_nearest_stop(lat, lng) {
+  var min_dist;
+  var min_dist_index;
+  for (var i=0; i<bus_stop_num-3; i++) {
+    var dx = lat - bus_stop_latlng[i][0];
+    var dy = lng - bus_stop_latlng[i][1];
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    if (i === 0) {
+      min_dist = dist
+      min_dist_index = 0;
+    } else if (min_dist > dist) {
+      min_dist = dist
+      min_dist_index = i;
+    }
+  }
+  console.log(min_dist_index);
+  return min_dist_index;
+}
+
 function decide_timetable(adm) {
   if (adm.direction && !adm.holiday) { //平日・右回り// alert("平日・右回り");
     timetable = timetable_list[0];
@@ -599,8 +618,6 @@ function calc_remaining_time(adm){
 
 }
 
-
-
 function render() {
   // console.log(administrator);
   ctx.clearRect(0, 0, w, h);
@@ -655,8 +672,8 @@ function render() {
   administrator.buses.forEach(function (bus, index) {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
-  administrator.next_bus.position_x = w / 2 - w / 4;
-  administrator.next_bus.position_y = h - 2 * h / 10;
+  administrator.next_bus.position_x = w / 2 - h / 4;
+  administrator.next_bus.position_y = h -  2* h / 10;
   administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);
   // console.log(administrator);
 }
