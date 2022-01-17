@@ -107,7 +107,7 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
 
 const bus_stop_num = 28;
 
-const bus_stop_names = ["つくばセンター","吾妻小学校前","筑波大学春日キャンパス","筑波メディカルセンター前","筑波大学病院入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境研究センター前","農林技術センター前","一の矢学生宿舎前","大学植物見本園","TARAセンター前","筑波大学中央","大学公園","松実池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカルセンター病院","筑波メディカルセンター前","筑波大学春日キャンパス","吾妻小学校前","つくばセンター"]
+const bus_stop_names = ["つくばセンター\n","吾妻小学校前","筑波大学\n春日キャンパス","筑波メディカル\nセンター前","筑波大学病院\n入口","追越学生宿舎前","平砂学生宿舎前","筑波大学西","大学会館前","第一エリア前","第三エリア前","陸域環境\n研究センター前","農林技術\nセンター前","一の矢\n学生宿舎前","大学植物見本園","TARA\nセンター前","筑波大学中央","大学公園","松美池","天久保三丁目","合宿所","天久保池","天久保二丁目","追越宿舎東","筑波メディカル\nセンター病院","筑波メディカル\nセンター前","筑波大学\n春日キャンパス","吾妻小学校前","つくばセンター"]
 const bus_stop_latlng = [[36.082537, 140.112707],[36.085158, 140.109299],[36.087872, 140.107274],[36.090369, 140.105539],[36.093142, 140.103876],[36.095351, 140.102961],[36.097729, 140.102154],[36.103252, 140.101509],[36.104838, 140.101194],[36.107915, 140.099888],[36.110122, 140.098603],[36.114711, 140.096923],[36.118348, 140.096042],[36.119404, 140.099170],[36.116047, 140.102103],[36.113164, 140.102179],[36.111278, 140.103595],[36.109826, 140.104035],[36.108121, 140.104282],[36.106372, 140.105679],[36.103688, 140.106732],[36.100184, 140.105618],[36.097574, 140.106049],[36.094516, 140.106743],[36.092658, 140.106397]]
 
 let timetable = timetable_list[0]
@@ -250,9 +250,66 @@ function Stop(id) {
 
     if(administrator.bus_stop_select_mode){
       ctx.fillStyle = "black";
-      ctx.font = "italic bold 10pt sans-serif";
-      ctx.fillText(me.name, x, y);
-      ctx.stroke();
+      const width = ctx.measureText(me.name).width;
+      const font_size = w/40;
+      const rotate_size = 75; // 半時計回り
+      // console.log(font_size);
+      ctx.font = "italic bold " + font_size + "pt sans-serif";
+      // console.log(me.name.indexOf("\n") !== -1);
+      if (me.name.indexOf("\n") !== -1) { // 改行を含む時
+        const index = me.name.indexOf("\n");
+        const t1 = me.name.slice(0, index);
+        const t2 = me.name.slice(index+1);
+        const w1 = ctx.measureText(t1).width;
+        const w2 = ctx.measureText(t2).width;
+        if (id < 11) {
+          ctx.fillText(t1, x-w1, y);
+          ctx.textBaseline = "top";
+          ctx.fillText(t2, x-w2, y);
+          ctx.textBaseline = "bottom";
+        } else if (id < 14) {
+          ctx.translate(x, y);
+          ctx.rotate(-rotate_size / 180 * Math.PI);
+          ctx.fillText(t1, 0-w1, 0);
+          ctx.textBaseline = "top";
+          ctx.fillText(t2, 0-w2, 0);
+          ctx.textBaseline = "bottom";
+          ctx.rotate(rotate_size / 180 * Math.PI);
+          ctx.translate(-x, -y);
+        } else if (id < 25) {
+          ctx.fillText(t1, x, y);
+          ctx.textBaseline = "top";
+          ctx.fillText(t2, x, y);
+          ctx.textBaseline = "bottom";
+        } else {
+          ctx.translate(x, y);
+          ctx.rotate(-rotate_size / 180 * Math.PI);
+          ctx.fillText(t1, 0, 0);
+          ctx.textBaseline = "top";
+          ctx.fillText(t2, 0, 0);
+          ctx.textBaseline = "bottom";
+          ctx.rotate(rotate_size / 180 * Math.PI);
+          ctx.translate(-x, -y);
+        }
+      } else {
+        if (id < 11) {
+          ctx.fillText(me.name, x-width, y);
+        } else if (id < 14) {
+          ctx.translate(x, y);
+          ctx.rotate(-rotate_size / 180 * Math.PI);
+          ctx.fillText(me.name, 0-width, 0);
+          ctx.rotate(rotate_size / 180 * Math.PI);
+          ctx.translate(-x, -y);
+        } else if (id < 25) {
+          ctx.fillText(me.name, x, y);
+        } else {
+          ctx.translate(x, y);
+          ctx.rotate(-rotate_size / 180 * Math.PI);
+          ctx.fillText(me.name, 0, 0);
+          ctx.rotate(rotate_size / 180 * Math.PI);
+          ctx.translate(-x, -y);
+        }
+      }
     }
   };
   
