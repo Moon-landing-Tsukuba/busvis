@@ -49,7 +49,7 @@ const reactions = document.querySelectorAll(".reaction-item");
 reactions.forEach(reaction => {
   reaction.addEventListener("click", () => {
     let late = reaction.dataset.late;
-    let id = 7;
+    let id = administrator.selected_bus_id + 1;
     let direction;
     if (administrator.direction) {
       direction = 'rights';

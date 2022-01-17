@@ -21,6 +21,8 @@ try {
 }
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
+  //ここに日付が変わったらときのUPDATE処理を書く
+  
   if(isset($_POST['id']) && isset($_POST['direction'])){
     $user_station =$_POST['id'];
     $direction = $_POST['direction'];
