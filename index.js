@@ -672,9 +672,7 @@ function render() {
   administrator.buses.forEach(function (bus, index) {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
-  administrator.next_bus.position_x = w / 2 - h / 4;
-  administrator.next_bus.position_y = h -  2* h / 10;
-  administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);
+  administrator.next_bus.draw(ctx,w /8 , h -  2* h / 10);
   // console.log(administrator);
 }
 
