@@ -8,9 +8,22 @@
     </head>
     <body>
         <header class="page-header wrapper">
-            <p>筑波大学中央</p>
-            <p>あと○○分</p>
-            <p>2分の遅れ予想</p>
+            <div class="container">
+                <div>
+                    <p id="user-station">第3エリア前</p>
+                    <p id="departure-time">○○分発</p>
+                </div>
+                <div>
+                    <div id="remaining-time-box">
+                        <p>次の発射まであと</p>
+                        <p id="remaining-time">22分23秒</p>
+                    </div>
+                    <div id="expected-time-box">
+                        <p id="late-time-line"><span id="late-time">4</span>分の遅れ予想</p>
+                        <p id="expected-time">あと26分23秒</p>
+                    </div>
+                </div>
+            </div>
         </header>
         
         <div class="user-reaction-box">

@@ -16,6 +16,8 @@ const administrator = {
   next_timetable : [], //next_busが参照しているタイムテーブル
   remaining_time : 0,
   switch : false,
+  departure_time : 600000, //選択されているバス停を選択されているバスが出発する時刻
+  late_time : 0, //遅延時間
 };
 
 /*-------------------------------------------
@@ -94,6 +96,15 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
   console.log(administrator);
 })
 
+/*-------------------------------------------
+* HEADER更新パート
+-------------------------------------------*/
+let user_station_dom = document.getElementById('user-station');
+let departure_time_dom = document.getElementById('departure-time');
+let remaining_time_dom = document.getElementById('remaining-time');
+let late_time_dom = document.getElementById('late-time');
+let expected_time_dom = document.getElementById('expected-time');
+
 
 /*-------------------------------------------
 *変数定義パート
@@ -107,7 +118,7 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
 
 const bus_stop_num = 28;
 
-const bus_stop_names = ["つくばセンター", "吾妻小学校前", "筑波大学春日キャンパス", "筑波メディカルセンター前", "筑波大学病院入口", "追越学生宿舎前", "平砂学生宿舎前", "筑波大学西", "大学会館前", "第一エリア前", "第三エリア前", "陸域環境研究センター前", "農林技術センター前", "一の矢学生宿舎前", "大学植物見本園", "TARAセンター前", "筑波大学中央", "大学公演", "松実池", "天久保三丁目", "合宿所", "天久保池", "天久保二丁目", "追越宿舎東", "筑波メディカルセンター病院", "筑波メディカルセンター前", "筑波大学春日キャンパス", "吾妻小学校前", "つくばセンター"]
+const bus_stop_names = ["つくばセンター", "吾妻小学校前", "筑波大学春日キャンパス", "筑波メディカルセンター前", "筑波大学病院入口", "追越学生宿舎前", "平砂学生宿舎前", "筑波大学西", "大学会館前", "第一エリア前", "第三エリア前", "陸域環境研究センター前", "農林技術センター前", "一の矢学生宿舎前", "大学植物見本園", "TARAセンター前", "筑波大学中央", "大学公園", "松美池", "天久保三丁目", "合宿所", "天久保池", "天久保二丁目", "追越宿舎東", "筑波メディカルセンター病院", "筑波メディカルセンター前", "筑波大学春日キャンパス", "吾妻小学校前", "つくばセンター"]
 const bus_stop_latlng = [[36.082537, 140.112707], [36.085158, 140.109299], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [,], [36.108121, 140.104282], [36.106372, 140.105679], [36.103688, 140.106732], [36.100184, 140.105618], [36.097574, 140.106049], [36.094516, 140.106743], [36.092658, 140.106397]]
 
 let timetable = timetable_list[0]
@@ -260,6 +271,7 @@ function Stop(id) {
         document.querySelector(".change-bus-stop").classList.remove("on-stop");
 
         // -----------Ajaxを記述. バスの遅延時間を取得.---------
+        // let id = administrator.selected_bus_id + 1;
         // let direction;
         // if (administrator.direction) {
         //   direction = 'rights';
@@ -270,17 +282,18 @@ function Stop(id) {
         // var req = new XMLHttpRequest();
         // req.open('POST', 'index.php', true);
         // req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        // req.send("id=" + administrator.user_station + "&direction=" + direction);
+        // req.send("id=" + id + "&direction=" + direction);
         // req.onreadystatechange = function () {
         //   var result = document.getElementById('result');
         //   if (req.readyState == 4) { // 通信の完了時
         //     if (req.status == 200) { // 通信の成功時
-        //       result.innerHTML = req.responseText;
+        //       late_time_dom.innerHTML = req.responseText;
+        //       administrator.late_time = req.responseText;
         //     }
         //   } else {
         //     result.innerHTML = "通信中...";
         //   }
-        // }
+        // } //-----
       }
     }
   });
@@ -547,8 +560,10 @@ function calc_remaining_time(adm){
   const tgt_hour = Math.floor(arrivalTime/10000);
   const tgt_min = Math.floor(arrivalTime/100) - tgt_hour*100;
   const tgt_sec = arrivalTime - tgt_hour*10000 - tgt_min*100;
-  const now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
 
+  administrator.departure_time = tgt_hour + "時" + tgt_min + "分";
+
+  const now_time = now_hour*3600 + now_min*60 + now_sec; //現在時刻を秒で表現
   const tgt_time = tgt_hour*3600 + tgt_min*60 + tgt_sec; //到着時刻を秒で表現
   
   let arrival = tgt_time - now_time;
@@ -598,7 +613,8 @@ function render() {
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
   calc_pos(administrator);
-  //[remaining_times,departure_times] = calc_remaining_time(administrator);
+
+  //バスや・バス停が変更された際はselected_bus_idを計算しなおす
   if(administrator.switch){
     console.log("1 - selected_bus_id : " +administrator.selected_bus_id);
     selected_bus_id_initialized();
@@ -606,22 +622,30 @@ function render() {
     console.log("2 - selected_bus_id : " +administrator.selected_bus_id);
 
   }
+
+  //ユーザーのいるバス停を表示
+  user_station_dom.innerText = bus_stop_names[administrator.user_station];
+
+  //出発時刻を表示
+  departure_time_dom.innerText = administrator.departure_time;
+
+  //Remaining-Timeの処理
   calc_remaining_time(administrator);
-
-  ctx.fillStyle = "black";
-  ctx.font = "italic bold 5pt sans-serif";
   const rem = administrator.remaining_time
-  //const dep =departure_times[0];
-  //ctx.fillText(dep, w/2-5*rem.length,h/2-20);
-  ctx.fillText(rem, w/2-5*rem.length,h/2);
+  remaining_time_dom.innerText = rem;
 
+  //遅延を反映した予想時刻の表示
+  
+
+  //運行中のバスを描画
   administrator.buses.forEach(function (bus, index) {
     bus.draw(ctx, bus.position_x, bus.position_y);
   });
+
+  //待機中のバスを描画
   administrator.next_bus.position_x = w / 2 - h / 4;
   administrator.next_bus.position_y = h -  2* h / 10;
   administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);
-  // console.log(administrator);
 }
 
 function zfill(NUM, LEN) {
@@ -671,7 +695,6 @@ create_buses(administrator.target_table);
 calc_bus_param(administrator.buses);
 calc_pos(administrator);
 selected_bus_id_initialized();
-//[remaining_times,departure_times] = calc_remaining_time(administrator);
 calc_remaining_time(administrator);
 console.log(administrator);
 render();

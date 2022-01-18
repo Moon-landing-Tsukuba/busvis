@@ -22,7 +22,7 @@ try {
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
   //ここに日付が変わったらときのUPDATE処理を書く
-  
+
   if(isset($_POST['id']) && isset($_POST['direction'])){
     $user_station =$_POST['id'];
     $direction = $_POST['direction'];
@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $sql = "SELECT id, ".$direction." FROM latetimes WHERE id = ".$user_station;
     $stmt = $pdo->query($sql);
     $result = $stmt->fetch();  //PDO::FETCH_ASSOCを指定すれば配列形式で返ってくる。ex) $result['id']のように指定。
-    echo("バスの遅延は --> ".$result->$direction." 分です");
+    echo($result->$direction."分の遅れ予想");
     exit;
   }
   if(isset($_POST['fetchid']) && isset($_POST['direct']) && isset($_POST['latetime'])){
