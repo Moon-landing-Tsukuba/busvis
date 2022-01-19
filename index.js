@@ -106,6 +106,7 @@ let departure_time_dom = document.getElementById('departure-time');
 let remaining_time_dom = document.getElementById('remaining-time');
 let late_time_dom = document.getElementById('late-time');
 let expected_time_dom = document.getElementById('expected-time');
+let header_dom = document.getElementById('header-id');
 
 
 /*-------------------------------------------
@@ -165,8 +166,9 @@ for (i = 0; i < bus_stop_num; i++) {
   stops.push(stop);
 }
 
-
 console.log(cvs.clientWidth);
+
+
 
 /*-------------------------------------------
 *オブジェクト定義パート
@@ -819,6 +821,15 @@ calc_pos(administrator);
 selected_bus_id_initialized();
 calc_remaining_time(administrator);
 console.log(administrator);
+
+
+let header_height = header_dom.clientHeight;
+
+console.log(header_height);
+
+// container.setAttribute("padding-top", String(header_height));
+container.style.paddingTop = header_height + 'px';
+
 render();
 
 setInterval(render, 30);

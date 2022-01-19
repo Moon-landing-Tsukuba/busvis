@@ -17,6 +17,10 @@
   /* padding: 0 4%; */
 }
 
+/* #header-id {
+  height: 200px;
+} */
+
 .page-header{
   padding: 4.5% 10% 1.5%;
   text-align: center;
@@ -75,10 +79,16 @@
 /* Reaction-Button
 ----------------------------------------------- */
 .user-reaction-box{
-  padding-top: 102px;
+  /* padding-top: 0px; */
   text-align: center;
   font-size: 0.5em;
   font-family: Arial;
+  visibility: hidden;
+  height: 0px;
+}
+
+#user-reaction {
+  padding-top: 300px;
 }
 
 .user-reaction-box ul{
