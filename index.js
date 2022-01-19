@@ -547,11 +547,12 @@ function calc_remaining_time(adm){
       userStation = timetable[0].length - userStation - 1; 
     }
   }
-
-  if(bus_id === 100){
+ 
+  if(bus_id == 100){
     arrivalTime = administrator.next_timetable[userStation];
   }else{
-    arrivalTime = timetable[bus_id][userStation]
+    console.log(timetable);
+    arrivalTime = timetable[bus_id][userStation];
   }
 
   const now_hour = Math.floor(now/10000);
@@ -608,12 +609,24 @@ function render() {
   for (var i = 0; i < bus_stop_num; i++) {
     stops[i].draw(ctx);
   }
-
+  //待機中のバスが発車した際にそのバスを選択し続ける。
+  var last_bus_id;
+  if(administrator.buses.length > 0){
+   last_bus_id = administrator.buses[administrator.buses.length-1].id;
+  }else{
+   last_bus_id = -1;
+  }
+  console.log(last_bus_id);
   check_table();
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
   calc_pos(administrator);
-
+  if(administrator.buses.length > 0){
+    var next_bus_id = administrator.buses[administrator.buses.length-1].id;
+    if((last_bus_id == -1 || last_bus_id != -1 && last_bus_id != next_bus_id) && administrator.selected_bus_id == 100){
+      administrator.selected_bus_id = next_bus_id;
+    }
+  } 
   //バスや・バス停が変更された際はselected_bus_idを計算しなおす
   if(administrator.switch){
     console.log("1 - selected_bus_id : " +administrator.selected_bus_id);
@@ -699,7 +712,7 @@ calc_remaining_time(administrator);
 console.log(administrator);
 render();
 
-setInterval(render, 30);
+setInterval(render, 600);
 
 navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得
