@@ -59,20 +59,41 @@ $lates = getLate($pdo);
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Busvis</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hello World</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div id="gps">
-            ここにデータを表示
-        </div>
-
-        <div class="btn-box">
-            <div class="btn switch-left-right on"></div>
-            <div class="btn switch-holiday-weekday weekday"></div>
-        </div>
-
-        <div class="user-reaction-box">
+        <header class="page-header wrapper" id='header-id'>
+            <div class="inner-box">
+                <div class="font-biggest">
+                    <p id="user-station">第3エリア前</p>
+                </div>
+                <div class="font-departure">
+                    <p id="departure-time">○○分発</p>
+                </div>
+                <div class="flex-container">
+                    <div id="remaining-time-box">
+                        <div class="font-smaller">
+                            <p>次の発車まであと</p>
+                        </div> 
+                        <div class="font-bigger">
+                            <p id="remaining-time">22分23秒</p>
+                        </div>
+                    </div>
+                    <div id="expected-time-box">
+                        <div class="font-bigger">
+                            <p id="late-time-line"><span id="late-time">4</span>分の遅れ予想</p>
+                        </div>
+                        <div class="font-smaller">
+                            <p id="expected-time">あと26分23秒</p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </header>
+        
+        <div class="user-reaction-box" id="user-reaction">
             <ul>
                 <li class="reaction-item" data-late="0">遅れなし</li>
                 <li class="reaction-item" data-late="2">2分遅れ</li>
@@ -80,29 +101,20 @@ $lates = getLate($pdo);
             </ul>
         </div>
 
-        <div id="result">バスの遅延は --> 0 分です</div><!-- このdiv内に整形したデータを非同期で入れる -->
-
-        <!-- <ul>
-          <?php foreach ($lates as $late): ?>
-            <li>
-              <span>
-                id : <?= htmlspecialchars($late->id); ?>
-                left : <?= htmlspecialchars($late->lefts); ?>
-                right : <?= htmlspecialchars($late->rights); ?>
-              </span>
-            </li>
-          <?php endforeach; ?>
-        </ul> -->
-
-        <p id="helloworld"></p>
-        <p id="testdis"></p>
-        <div id="container"></div>
-        <div>
-            <p id="arrival"></p>
-            <p id="nowtime"></p>
+        <div id="container" class="canvas-box">
+            <canvas id="bus-map"></canvas>
         </div>
 
-        <script src="timetable_list.js"></script>
-        <script src="index.js"></script>
+        <div class="btn-box wrapper">
+            <div class="btn-container">
+                <div class="btn btn-common switch-left-right on"></div>
+                <div class="btn btn2 change-bus-stop"></div> <!--バス停を変更するボタン-->
+                <div class="btn btn2 change-bus"></div> <!--バスを変更するボタン-->
+                <div class="btn btn-common switch-holiday-weekday weekday"></div>
+            </div>
+        </div>
+
+        <script src="./timetable_list.js"></script>
+        <script src="./index.js"></script>
     </body>
 </html>
