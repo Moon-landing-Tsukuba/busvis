@@ -35,6 +35,7 @@ document.querySelector(".switch-left-right").addEventListener("click", (event) =
   decide_timetable(administrator);
   administrator.switch = true;
   console.log(administrator);
+  // ajax_func();
 })
 
 document.querySelector(".switch-holiday-weekday").addEventListener("click", (event) => {
@@ -222,6 +223,7 @@ function Bus(id) {
         // console.log("selected_bus_id : " +administrator.selected_bus_id);
         administrator.bus_select_mode = false;
         document.querySelector(".change-bus").classList.remove("on-bus");
+        // ajax_func();
       }
     }
   });
@@ -338,31 +340,6 @@ function Stop(id) {
         administrator.user_station = me.id;
         administrator.bus_stop_select_mode = false;
         document.querySelector(".change-bus-stop").classList.remove("on-stop");
-
-        // -----------Ajaxを記述. バスの遅延時間を取得.---------
-        // let id = administrator.selected_bus_id + 1;
-        // let direction;
-        // if (administrator.direction) {
-        //   direction = 'rights';
-        // } else {
-        //   direction = 'lefts';
-        // }
-
-        // var req = new XMLHttpRequest();
-        // req.open('POST', 'index.php', true);
-        // req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        // req.send("id=" + id + "&direction=" + direction);
-        // req.onreadystatechange = function () {
-        //   var result = document.getElementById('result');
-        //   if (req.readyState == 4) { // 通信の完了時
-        //     if (req.status == 200) { // 通信の成功時
-        //       late_time_dom.innerHTML = req.responseText;
-        //       administrator.late_time = req.responseText;
-        //     }
-        //   } else {
-        //     result.innerHTML = "通信中...";
-        //   }
-        // } //-----
       }
     }
   });
@@ -699,6 +676,33 @@ function calc_remaining_time(adm){
   }
 }
 
+function ajax_func(){
+  // -----------Ajaxを記述. バスの遅延時間を取得.---------
+  let id = administrator.selected_bus_id + 1;
+  let direction;
+  if (administrator.direction) {
+    direction = 'rights';
+  } else {
+    direction = 'lefts';
+  }
+
+  var req = new XMLHttpRequest();
+  req.open('POST', 'index.php', true);
+  req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  req.send("id=" + id + "&direction=" + direction);
+  req.onreadystatechange = function () {
+    var result = document.getElementById('result');
+    if (req.readyState == 4) { // 通信の完了時
+      if (req.status == 200) { // 通信の成功時
+        late_time_dom.innerHTML = req.responseText;
+        administrator.late_time = req.responseText;
+      }
+    } else {
+      result.innerHTML = "通信中...";
+    }
+  } //-----
+}
+
 function render() {
   let header_height = header_dom.clientHeight;
   container.style.paddingTop = header_height + 'px';
@@ -744,6 +748,7 @@ function render() {
   calc_pos(administrator);
   if(administrator.buses.length > 0){
     var next_bus_id = administrator.buses[administrator.buses.length-1].id;
+    // ajax_func();
     if((last_bus_id == -1 || last_bus_id != -1 && last_bus_id != next_bus_id) && administrator.selected_bus_id == 100){
       administrator.selected_bus_id = next_bus_id;
     }
@@ -769,9 +774,15 @@ function render() {
   remaining_time_dom.innerText = rem;
 
   //遅延を反映した予想時刻の表示
-  let late_min = administrator.remaining_min + administrator.late_time;
-  let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
-  expected_time_dom.innerText = expected_remaining_time;
+  if(administrator.correct_holiday == administrator.holiday){
+    let late_min = administrator.remaining_min + administrator.late_time;
+    let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
+    late_time_dom.innerHTML = administrator.late_time;
+    expected_time_dom.innerText = expected_remaining_time;
+  }else{
+    late_time_dom.innerHTML = "-"
+    expected_time_dom.innerText = "---"
+  }
 
   //運行中のバスを描画
   administrator.buses.forEach(function (bus, index) {
@@ -835,6 +846,7 @@ calc_bus_param(administrator.buses);
 calc_pos(administrator);
 selected_bus_id_initialized();
 calc_remaining_time(administrator);
+// ajax_func();
 console.log(administrator);
 
 
