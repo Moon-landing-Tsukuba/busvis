@@ -805,7 +805,7 @@ function render() {
   calc_pos(administrator);
   if(administrator.buses.length > 0){
     var next_bus_id = administrator.buses[administrator.buses.length-1].id;
-    ajax_func();
+    // ajax_func();
     if((last_bus_id == -1 || last_bus_id != -1 && last_bus_id != next_bus_id) && administrator.selected_bus_id == 100){
       administrator.selected_bus_id = next_bus_id;
     }
