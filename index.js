@@ -5,6 +5,7 @@
 const administrator = {
   direction: true, //右回りならTrue
   user_station: 0, //バス停の識別IDが入る
+  previous_station : 0, //headerが出ているときに選択されているバスのID
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
@@ -12,10 +13,14 @@ const administrator = {
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
   selected_bus_id : 100, //選択されているバスのID
+  previous_bus : 0, //headerが出ているときに選択されているバスのID
   next_bus : null, //待機中のバスインスタンス
   next_timetable : [], //next_busが参照しているタイムテーブル
   remaining_time : 0,
+  remaining_min : 0,
+  remaining_sec : 0,
   switch : false,
+
 };
 
 /*-------------------------------------------
@@ -151,7 +156,7 @@ for (i = 0; i < bus_stop_num; i++) {
   const stop = new Stop(i);
   stops.push(stop);
 }
-
+container.style.visibility = "hidden";
 
 console.log(cvs.clientWidth);
 
@@ -667,13 +672,32 @@ function calc_remaining_time(adm){
     const arrival_min = Math.floor(arrival/60);
     const arrival_sec = arrival - arrival_min*60;
     administrator.remaining_time = arrival_min + "分" + arrival_sec + "秒";
+    administrator.remaining_min = arrival_min;
+    administrator.remaining_sec = arrival_sec;
   }else{
     arrival = arrival * (-1);
     const arrival_min = Math.floor(arrival/60);
     const arrival_sec = arrival - arrival_min*60;
     administrator.remaining_time = "-" + arrival_min + "分" + arrival_sec + "秒";
+    administrator.remaining_min = arrival_min;
+    administrator.remaining_sec = arrival_sec;
   }
 
+}
+function manage_header(adm){
+  if(adm.remaining_min == 0 && adm.remaining_sec < 20){
+    container.style.visibility ="visible";
+    container.style.height = null ;
+    adm.previous_station = adm.user_station;
+    adm.previous_bus = adm.selected_bus_id;
+  }
+  else{  
+    if(adm.previous_station != adm.user_station || adm.previous_bus != adm.selected_bus_id )
+    {
+      container.style.visibility ="hidden";
+      container.style.height = "0";
+    }
+  }
 }
 
 function render() {
@@ -705,7 +729,7 @@ function render() {
   for (var i = 0; i < bus_stop_num; i++) {
     stops[i].draw(ctx);
   }
-
+ 
   check_table();
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
@@ -719,7 +743,13 @@ function render() {
 
   }
   calc_remaining_time(administrator);
+  manage_header(administrator);
+  console.log(administrator);
+  
 
+
+  
+  
   ctx.fillStyle = "black";
   ctx.font = "italic bold 5pt sans-serif";
   const rem = administrator.remaining_time
