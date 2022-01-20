@@ -758,6 +758,8 @@ function manage_header(adm){
     {
       container.style.visibility ="hidden";
       container.style.height = "0";
+      let canvas_box = document.getElementById('container');
+      canvas_box.style.paddingTop = "13px";
     }
   }
 }
