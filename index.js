@@ -174,6 +174,10 @@ for (i = 0; i < bus_stop_num; i++) {
 
 // console.log(cvs.clientWidth);
 
+
+let header_height = header_dom.clientHeight;
+container.style.paddingTop = header_height + 'px';
+
 container.style.visibility = "hidden";
 
 
@@ -742,6 +746,10 @@ function manage_header(adm){
     container.style.height = null ;
     adm.previous_station = adm.user_station;
     adm.previous_bus = adm.selected_bus_id;
+    let canvas_box = document.getElementById('container');
+    let reaction_items_dom = document.getElementById('reaction-items');
+    let reaction_items_height = reaction_items_dom.clientHeight;
+    canvas_box.style.paddingTop = reaction_items_height + "px";
   }
   else{  
     if(adm.previous_station != adm.user_station || adm.previous_bus != adm.selected_bus_id )
@@ -909,10 +917,6 @@ selected_bus_id_initialized();
 calc_remaining_time(administrator);
 ajax_func();
 // console.log(administrator);
-
-
-let header_height = header_dom.clientHeight;
-container.style.paddingTop = header_height + 'px';
 
 render();
 
