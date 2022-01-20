@@ -7,23 +7,33 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <header class="page-header wrapper">
-            <div class="container">
-                <div>
+        <header class="page-header wrapper" id='header-id'>
+            <div>
+                <div class="font-biggest">
                     <p id="user-station">第3エリア前</p>
+                </div>
+                <div class="font-departure">
                     <p id="departure-time">○○分発</p>
                 </div>
-                <div>
+                <div class="flex-container">
                     <div id="remaining-time-box">
-                        <p>次の発射まであと</p>
-                        <p id="remaining-time">22分23秒</p>
+                        <div class="font-smaller">
+                            <p>次の発射まであと</p>
+                        </div> 
+                        <div class="font-bigger">
+                            <p id="remaining-time">22分23秒</p>
+                        </div>
                     </div>
                     <div id="expected-time-box">
-                        <p id="late-time-line"><span id="late-time">4</span>分の遅れ予想</p>
-                        <p id="expected-time">あと26分23秒</p>
+                        <div class="font-bigger">
+                            <p id="late-time-line"><span id="late-time">4</span>分の遅れ予想</p>
+                        </div>
+                        <div class="font-smaller">
+                            <p id="expected-time">あと26分23秒</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div> 
         </header>
         
         <div class="user-reaction-box" id="user-reaction">

@@ -17,7 +17,9 @@ const administrator = {
   remaining_time : 0,
   switch : false,
   departure_time : 600000, //選択されているバス停を選択されているバスが出発する時刻
-  late_time : 0, //遅延時間
+  late_time : 2, //遅延時間
+  remaining_min : 0,
+  remaining_sec : 0,
 };
 
 /*-------------------------------------------
@@ -105,6 +107,7 @@ let departure_time_dom = document.getElementById('departure-time');
 let remaining_time_dom = document.getElementById('remaining-time');
 let late_time_dom = document.getElementById('late-time');
 let expected_time_dom = document.getElementById('expected-time');
+let header_dom = document.getElementById('header-id');
 
 
 /*-------------------------------------------
@@ -164,8 +167,9 @@ for (i = 0; i < bus_stop_num; i++) {
   stops.push(stop);
 }
 
-
 console.log(cvs.clientWidth);
+
+
 
 /*-------------------------------------------
 *オブジェクト定義パート
@@ -688,11 +692,15 @@ function calc_remaining_time(adm){
     const arrival_min = Math.floor(arrival/60);
     const arrival_sec = arrival - arrival_min*60;
     administrator.remaining_time = arrival_min + "分" + arrival_sec + "秒";
+    administrator.remaining_min = arrival_min;
+    administrator.remaining_sec = arrival_sec;
   }else{
     arrival = arrival * (-1);
     const arrival_min = Math.floor(arrival/60);
     const arrival_sec = arrival - arrival_min*60;
     administrator.remaining_time = "-" + arrival_min + "分" + arrival_sec + "秒";
+    administrator.remaining_min = arrival_min;
+    administrator.remaining_sec = arrival_sec;
   }
 }
 
@@ -752,7 +760,9 @@ function render() {
   remaining_time_dom.innerText = rem;
 
   //遅延を反映した予想時刻の表示
-  
+  let late_min = administrator.remaining_min + administrator.late_time;
+  let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
+  expected_time_dom.innerText = expected_remaining_time;
 
   //運行中のバスを描画
   administrator.buses.forEach(function (bus, index) {
@@ -817,6 +827,15 @@ calc_pos(administrator);
 selected_bus_id_initialized();
 calc_remaining_time(administrator);
 console.log(administrator);
+
+
+let header_height = header_dom.clientHeight;
+
+console.log(header_height);
+
+// container.setAttribute("padding-top", String(header_height));
+container.style.paddingTop = header_height + 'px';
+
 render();
 
 setInterval(render, 30);
