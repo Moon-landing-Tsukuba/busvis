@@ -27,7 +27,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $user_station =$_POST['id'];
     $direction = $_POST['direction'];
 
-    $sql = "SELECT id, ".$direction." FROM latetimes WHERE id = ".$user_station."AND DATE_FORMAT(updated_at, '%Y-%m-%d') = DATE_FORMAT(CURTIME(), '%Y-%m-%d');";
+    $sql = "SELECT id, ".$direction." FROM latetimes WHERE id = ".$user_station." AND DATE_FORMAT(updated_at, '%Y-%m-%d') = DATE_FORMAT(CURTIME(), '%Y-%m-%d')";
     $stmt = $pdo->query($sql);
     $result = $stmt->fetch();  //PDO::FETCH_ASSOCを指定すれば配列形式で返ってくる。ex) $result['id']のように指定。
     echo($result->$direction);
