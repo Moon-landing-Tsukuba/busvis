@@ -245,6 +245,28 @@
 ----------------------------------------------- */
 
 
+/* 説明文
+----------------------------------------------- */
+#explanation{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.explanation-wrapp {
+  font-family: Arial;
+  font-size: small;
+  color: #777;
+}
+.explanation {
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 30%;
+  text-align: left;
+}
+
+/* 説明文
+----------------------------------------------- */
+
 
 /* デスクトップ用
 ----------------------------------------------- */
