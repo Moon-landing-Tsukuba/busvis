@@ -17,22 +17,78 @@
   /* padding: 0 4%; */
 }
 
+/* #header-id {
+  height: 200px;
+} */
+
 .page-header{
-  padding: 10px 0;
+  padding: 4.5% 10% 1.5%;
   text-align: center;
-  color: #fff;
+  color: #555;
   font-weight: bold;
-  background-color: rgba(96, 153, 240, 0.664);
+  background-color: rgba(255, 255, 255, 0.664);
+  /*background-color: #32A9C2;*/
   position:fixed;
+  font-family: Arial;
+  border-bottom: 1px solid #32a9c2
+}
+
+/* 親要素(コンテナ) */
+.flex-container {
+  /* background-color: #dfdfdf;*/
+  padding: 1.5% 0 0;
+  display: flex;
+  text-align: center;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
+  
+}
+/*駅名*/
+.font-biggest {
+  font-size: 1.8em;
+  font-family: "Arial Black";
+}
+.font-departure {
+  font-size: smaller;
+  color: #999;
+  border-bottom: solid 3px #999;
+  display: inline-block;
+}
+/* 大きめのフォント*/
+.font-bigger {
+  font-size: larger;
+}
+/* 小さめのフォント*/
+.font-smaller {
+  font-size: smaller;
+  color: #999;
+}
+/* 子要素(アイテム) */
+.flex-item-big {
+	background-color: #343434;
+	color: #fff;
+}
+/* 子要素(アイテム) */
+.flex-item-small {
+	background-color: #343434;
+	color: #fff;
 }
 
 
 /* Reaction-Button
 ----------------------------------------------- */
 .user-reaction-box{
-  padding-top: 102px;
+  /* padding-top: 0px; */
   text-align: center;
   font-size: 0.5em;
+  font-family: Arial;
+  visibility: hidden;
+  height: 0px;
+}
+
+#user-reaction {
+  padding-top: 300px;
 }
 
 .user-reaction-box ul{
@@ -75,11 +131,12 @@
 .btn-box{
   text-align: center;
   display: flex;
-  background-color: rgba(96, 153, 240, 0.664);
+  background-color: #32a9c2;
   padding: 10px 0;
   position: fixed; /* フッターを固定する */
   bottom: 0; /* 上部から配置の基準位置を決める */
   left: 0; /* 左から配置の基準位置を決める */
+  font-family: Arial;
 }
 
 .btn-container{
@@ -96,7 +153,7 @@
   width: 50px;
   height: 30px;
   max-width: 100%;
-  background: rgb(247, 186, 186);
+  background: #ff5f76;
   border-radius: 100em;
   box-shadow: inset 0px 1px 1px 1px #d6d6d6, inset 0 -1px 1px 1px #ececec, inset 0 0 0px 2px #f5f5f5;
 }
@@ -126,7 +183,7 @@
 }
 
 .on , .weekday{
-  background: #9fc9f0;
+  background: #32a9c2;
   /* box-shadow: unset; */
 }
 .on::before{
@@ -147,7 +204,7 @@
 .btn2{
   font-weight: bold;
   font-size: small;
-  background-color: rgb(159, 201, 240);
+  background-color: #32a9c2;
 }
 
 .btn2::before{
@@ -161,11 +218,13 @@
 
 .change-bus-stop::before{
   content: "バス停";
+  color: #fff;
 }
 
 .change-bus::before{
   content: "バス";
   left: 25%;
+  color: #fff;
 }
 
 .on-stop, .on-bus{
