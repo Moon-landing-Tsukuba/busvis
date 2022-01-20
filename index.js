@@ -4,7 +4,7 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 0, //バス停の識別IDが入る
+  user_station: 16, //バス停の識別IDが入る
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
@@ -264,7 +264,7 @@ function Stop(id) {
     ctx.fill();
     ctx.stroke();
 
-    if(administrator.bus_stop_select_mode){
+    if(1){ // administrator.bus_stop_select_mode
       ctx.fillStyle = "black";
       const width = ctx.measureText(me.name).width;
       const font_size = w/40;
@@ -661,7 +661,7 @@ function calc_remaining_time(adm){
       userStation = timetable[0].length - userStation - 1; 
     }
   }
- 
+
   if(bus_id == 100){
     arrivalTime = administrator.next_timetable[userStation];
   }else{
@@ -700,6 +700,8 @@ function calc_remaining_time(adm){
 }
 
 function render() {
+  let header_height = header_dom.clientHeight;
+  container.style.paddingTop = header_height + 'px';
   // console.log(administrator);
   ctx.clearRect(0, 0, w, h);
 
@@ -731,9 +733,9 @@ function render() {
   //待機中のバスが発車した際にそのバスを選択し続ける。
   var last_bus_id;
   if(administrator.buses.length > 0){
-   last_bus_id = administrator.buses[administrator.buses.length-1].id;
+    last_bus_id = administrator.buses[administrator.buses.length-1].id;
   }else{
-   last_bus_id = -1;
+    last_bus_id = -1;
   }
   console.log(last_bus_id);
   check_table();
@@ -759,7 +761,7 @@ function render() {
   user_station_dom.innerText = bus_stop_names[administrator.user_station];
 
   //出発時刻を表示
-  departure_time_dom.innerText = administrator.departure_time;
+  departure_time_dom.innerText = administrator.departure_time + " 発";
 
   //Remaining-Timeの処理
   calc_remaining_time(administrator);
@@ -837,15 +839,11 @@ console.log(administrator);
 
 
 let header_height = header_dom.clientHeight;
-
-console.log(header_height);
-
-// container.setAttribute("padding-top", String(header_height));
 container.style.paddingTop = header_height + 'px';
 
 render();
 
-setInterval(render, 600);
+setInterval(render, 50);
 
 navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得

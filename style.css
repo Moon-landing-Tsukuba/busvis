@@ -22,7 +22,7 @@
 } */
 
 .page-header{
-  padding: 4.5% 10% 1.5%;
+  padding: 20px 10% 15px;
   text-align: center;
   color: #555;
   font-weight: bold;
@@ -32,6 +32,10 @@
   font-family: Arial;
   border-bottom: 1px solid #32a9c2
 }
+
+/* .inner-box{
+  background-color: #fff;
+} */
 
 /* 親要素(コンテナ) */
 .flex-container {
@@ -120,6 +124,11 @@
 #container{
   text-align: center;
 }
+
+.canvas-box{
+  padding: 10px 0 45px;
+}
+
 /* 
 #bus-map{
   width: 100%;
@@ -251,5 +260,13 @@
     margin: 10px;
     padding: 10px 0;
     font-size: 1em;
+  }
+
+  .page-header{
+    padding: 40px 20% 15px;
+  }
+
+  .canvas-box{
+    padding-top: 20px;
   }
 }
