@@ -134,7 +134,7 @@
 }
 
 .canvas-box{
-  padding: 10px 0 45px;
+  padding: 10px 0 23px;
 }
 
 /* 
@@ -276,6 +276,31 @@
   padding-left: 10%;
   padding-right: 10%;
   text-align: left;
+}
+
+.logo-pos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-size {
+  width: 42%;
+  /* padding-bottom: 30%; */
+  padding-bottom: 1px;
+}
+
+.box7{
+  padding: 0.5em 1em;
+  margin: 2em 0;
+  color: #777;
+  background: whitesmoke;/*背景色*/
+  border-left: double 7px #32a9c2;/*左線*/
+  border-right: double 7px #32a9c2;/*右線*/
+}
+.box7 p {
+  margin: 0; 
+  padding: 0;
 }
 
 .logo-wrapp {
