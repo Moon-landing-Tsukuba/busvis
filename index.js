@@ -305,12 +305,13 @@ function Stop(id) {
     ctx.stroke();
 
     if(1){ // administrator.bus_stop_select_mode
-      ctx.fillStyle = "black";
+      ctx.fillStyle = "#666";
       const width = ctx.measureText(me.name).width;
-      const font_size = w/40;
+      const font_size = w/45;
       const rotate_size = 75; // 半時計回り
       // console.log(font_size);
-      ctx.font = "italic bold " + font_size + "pt sans-serif";
+      // ctx.font = "italic bold " + font_size + "pt sans-serif";
+      ctx.font = "" + font_size + "pt 'Arial'";
       // console.log(me.name.indexOf("\n") !== -1);
       if (me.name.indexOf("\n") !== -1) { // 改行を含む時
         const index = me.name.indexOf("\n");
@@ -750,6 +751,7 @@ function manage_header(adm){
     let reaction_items_dom = document.getElementById('reaction-items');
     let reaction_items_height = reaction_items_dom.clientHeight;
     canvas_box.style.paddingTop = reaction_items_height + "px";
+
   }
   else{  
     if(adm.previous_station != adm.user_station || adm.previous_bus != adm.selected_bus_id )

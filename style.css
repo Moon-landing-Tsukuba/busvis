@@ -40,7 +40,7 @@
 /* 親要素(コンテナ) */
 .flex-container {
   /* background-color: #dfdfdf;*/
-  padding: 1.5% 0 0;
+  padding: 3% 0 0;
   display: flex;
   text-align: center;
   flex-direction: row;
@@ -50,8 +50,10 @@
 }
 /*駅名*/
 .font-biggest {
-  font-size: 1.8em;
+  font-size: 1.75em;
   font-family: "Arial Black";
+  line-height: 1.3em;
+  padding-bottom: 0.89%;
 }
 .font-departure {
   font-size: smaller;
@@ -67,6 +69,12 @@
 .font-smaller {
   font-size: smaller;
   color: #999;
+  line-height: 0.9em;
+}
+/* 遅れのフォント*/
+.font-delay {
+  font-size: larger;
+  color: #ff5f76;
 }
 /* 子要素(アイテム) */
 .flex-item-big {
@@ -141,7 +149,7 @@
   text-align: center;
   display: flex;
   background-color: #32a9c2;
-  padding: 10px 0;
+  padding: 15px 0;
   position: fixed; /* フッターを固定する */
   bottom: 0; /* 上部から配置の基準位置を決める */
   left: 0; /* 左から配置の基準位置を決める */
@@ -159,8 +167,10 @@
   display: inline-block;
   vertical-align: middle;
   text-align: center;
-  width: 50px;
-  height: 30px;
+  width: 75px;
+  height: 48px;
+  /* width: 80px;
+  height: 50px; */
   max-width: 100%;
   background: #ff5f76;
   border-radius: 100em;
@@ -226,18 +236,23 @@
 }
 
 .change-bus-stop::before{
+  margin-left: 11%;
+  margin-top: 8%;
+  font-size: 15px;
   content: "バス停";
   color: #fff;
 }
 
 .change-bus::before{
   content: "バス";
-  left: 25%;
+  font-size: 15px;
+  margin-top: 8%;
+  left: 27.8%;
   color: #fff;
 }
 
 .on-stop, .on-bus{
-  background-color: rgb(3, 221, 250);
+  background-color:#8ccfdd;
   color: #000000;
 }
 
