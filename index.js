@@ -4,7 +4,8 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 3, //バス停の識別IDが入る
+  user_station: 0, //バス停の識別IDが入る
+  previous_station : 0, //headerが出ているときに選択されているバスのID
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
@@ -12,9 +13,12 @@ const administrator = {
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
   selected_bus_id : 100, //選択されているバスのID
+  previous_bus : 0, //headerが出ているときに選択されているバスのID
   next_bus : null, //待機中のバスインスタンス
   next_timetable : [], //next_busが参照しているタイムテーブル
   remaining_time : 0,
+  remaining_min : 0,
+  remaining_sec : 0,
   switch : false,
   departure_time : 600000, //選択されているバス停を選択されているバスが出発する時刻
   late_time : 2, //遅延時間
@@ -170,6 +174,7 @@ for (i = 0; i < bus_stop_num; i++) {
 
 // console.log(cvs.clientWidth);
 
+container.style.visibility = "hidden";
 
 
 /*-------------------------------------------
@@ -731,6 +736,21 @@ function ajax_func(){
     }
   } //-----
 }
+function manage_header(adm){
+  if(adm.remaining_min == 0 && adm.remaining_sec < 20){
+    container.style.visibility ="visible";
+    container.style.height = null ;
+    adm.previous_station = adm.user_station;
+    adm.previous_bus = adm.selected_bus_id;
+  }
+  else{  
+    if(adm.previous_station != adm.user_station || adm.previous_bus != adm.selected_bus_id )
+    {
+      container.style.visibility ="hidden";
+      container.style.height = "0";
+    }
+  }
+}
 
 function render() {
   let header_height = header_dom.clientHeight;
@@ -799,6 +819,15 @@ function render() {
 
   //Remaining-Timeの処理
   calc_remaining_time(administrator);
+  manage_header(administrator);
+  console.log(administrator);
+  
+
+
+  
+  
+  ctx.fillStyle = "black";
+  ctx.font = "italic bold 5pt sans-serif";
   const rem = administrator.remaining_time
   remaining_time_dom.innerText = rem;
 
