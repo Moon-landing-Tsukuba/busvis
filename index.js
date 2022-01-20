@@ -35,7 +35,7 @@ document.querySelector(".switch-left-right").addEventListener("click", (event) =
   decide_timetable(administrator);
   administrator.switch = true;
   console.log(administrator);
-  ajax_func();
+  // ajax_func();
 })
 
 document.querySelector(".switch-holiday-weekday").addEventListener("click", (event) => {
@@ -223,7 +223,7 @@ function Bus(id) {
         // console.log("selected_bus_id : " +administrator.selected_bus_id);
         administrator.bus_select_mode = false;
         document.querySelector(".change-bus").classList.remove("on-bus");
-        ajax_func();
+        // ajax_func();
       }
     }
   });
@@ -846,7 +846,7 @@ calc_bus_param(administrator.buses);
 calc_pos(administrator);
 selected_bus_id_initialized();
 calc_remaining_time(administrator);
-ajax_func();
+// ajax_func();
 console.log(administrator);
 
 
