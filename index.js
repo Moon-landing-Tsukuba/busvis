@@ -86,6 +86,7 @@ document.querySelector(".change-bus-stop").addEventListener("click", (event) => 
 
 document.querySelector(".change-bus").addEventListener("click", (event) => {
   event.target.classList.toggle("on-bus")
+  // console.log(JSON.parse(JSON.stringify(administrator)));
   if (event.target.classList.contains("on-bus")) {
     administrator.bus_select_mode = true;// alert("bus_select_mode = true");
     console.log("bus_select_mode = true");
@@ -93,7 +94,7 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
     administrator.bus_select_mode = false;// alert("bus_select_mode = false");
     console.log("bus_select_mode = false");
   }
-  console.log(administrator);
+  // console.log(JSON.parse(JSON.stringify(administrator)));
 })
 
 /*-------------------------------------------
@@ -211,15 +212,20 @@ function Bus(id) {
     var dx = me.position_x - e.layerX;
     var dy = me.position_y - e.layerY;
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
-    if (administrator.bus_select_mode){  //バス変更ボタンが押されている＆どこかのバスがクリックされたら切り替え
-      if (me.is_clicked) {
-        // console.log("bus clicked and my bus ID is " + me.id);
-        administrator.selected_bus_id = me.id;
-        // console.log("selected_bus_id : " +administrator.selected_bus_id);
-        administrator.bus_select_mode = false;
-        document.querySelector(".change-bus").classList.remove("on-bus");
+    administrator.buses.forEach(function(value, index) {
+      // console.log(JSON.parse(JSON.stringify(value)));
+      if (value.id === me.id || me.id === 100) {
+        if (administrator.bus_select_mode){  //バス変更ボタンが押されている＆どこかのバスがクリックされたら切り替え
+          if (me.is_clicked) {
+            console.log("bus clicked and my bus ID is " + me.id);
+            administrator.selected_bus_id = me.id;
+            console.log("selected_bus_id : " +administrator.selected_bus_id);
+            administrator.bus_select_mode = false;
+            document.querySelector(".change-bus").classList.remove("on-bus");
+          }
+        }
       }
-    }
+    })
   });
 }
 
@@ -633,7 +639,7 @@ function selected_bus_id_initialized(){
     candidate_time.some(function(value, index){
       if(now > value) count = count + 1;
     });
-
+    
     if(count === administrator.buses.length){
       administrator.selected_bus_id = 100;
     }else{
@@ -688,7 +694,6 @@ function calc_remaining_time(adm){
     const arrival_sec = arrival - arrival_min*60;
     administrator.remaining_time = "-" + arrival_min + "分" + arrival_sec + "秒";
   }
-
 }
 
 function render() {
@@ -757,7 +762,7 @@ function render() {
   //待機中のバスを描画
   administrator.next_bus.position_x = w / 2 - h / 4;
   administrator.next_bus.position_y = h -  2* h / 10;
-  administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);
+  administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);  
 }
 
 function zfill(NUM, LEN) {
