@@ -4,7 +4,7 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 16, //バス停の識別IDが入る
+  user_station: 3, //バス停の識別IDが入る
   target_table: [],
   buses: [],
   holiday: false, //休日ならばtrue
@@ -861,6 +861,7 @@ navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得
   var lng = position.coords.longitude;           // 経度を取得
   administrator.user_station = calc_nearest_stop(lat, lng);
+  selected_bus_id_initialized();
 }, (error) => {                                     // エラー処理（今回は特に何もしない）
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
