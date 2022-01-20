@@ -779,6 +779,14 @@ function render() {
     ctx.stroke();
   }
 
+  //待機中のバスを描画
+  const left_bottom_pos = bus_stop_positions[0];
+  const tmp_x = left_bottom_pos[0] - w/10;
+  const tmp_y = left_bottom_pos[1];
+  administrator.next_bus.position_x = tmp_x;
+  administrator.next_bus.position_y = tmp_y;
+  administrator.next_bus.draw(ctx, tmp_x, tmp_y); 
+
   //停留所インスタンスの生成
   for (var i = 0; i < bus_stop_num; i++) {
     stops[i].draw(ctx);
@@ -845,12 +853,7 @@ function render() {
   //運行中のバスを描画
   administrator.buses.forEach(function (bus, index) {
     bus.draw(ctx, bus.position_x, bus.position_y);
-  });
-
-  //待機中のバスを描画
-  administrator.next_bus.position_x = w / 2 - h / 4;
-  administrator.next_bus.position_y = h -  2* h / 10;
-  administrator.next_bus.draw(ctx,w / 2 - h / 4,h -  2* h / 10);  
+  }); 
 }
 
 function zfill(NUM, LEN) {
