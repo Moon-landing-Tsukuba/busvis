@@ -188,28 +188,51 @@ function Bus(id) {
   this.remaining_time = 0;
   this.position_x = 0;
   this.position_y = 0;
-  this.size = w / 50 * 3;
+  this.size = w / 30;
   this.is_clicked = false;
 
   this.draw = function (ctx, x, y) {
-    ctx.lineWidth = w / 250;
-    
+    // size = バスのサイズ
+    me.size = w / 30;
+
+    // size = sizeのパラメータ
+    let size2 = me.size*0.45;
+
+    // 線の幅は適当に割った
+    ctx.lineWidth = w / 100;
+    ctx.strokeStyle = "white";
+
+    // 色 = '#ff4e72' <- アイコンのピンク色
+    // 一番大きい円の描画
+    // ctx.fillStyle = "#ff4e72";
     if(administrator.selected_bus_id === me.id){
       ctx.fillStyle = "#FF5F76";
     }else{
       ctx.fillStyle = "#32A9C2";
     }
-
     ctx.beginPath();
-    ctx.strokeStyle = "#fff";
-    ctx.moveTo(x - this.size / 3, y - this.size / 3);
-    ctx.lineTo(x + this.size / 3, y - this.size / 3);
-    ctx.lineTo(x + this.size / 3, y + this.size / 3);
-    ctx.lineTo(x - this.size / 3, y + this.size / 3);
-    ctx.closePath();
-    ctx.fill();
+    ctx.moveTo(x+me.size, y);
+    ctx.arc(x, y, me.size, 0, 2 * Math.PI);
     ctx.stroke();
-    
+    ctx.fill();
+
+    // 白い長方形の描画
+    ctx.fillStyle = "white";
+    ctx.fillRect(x-size2*1.1, y-size2*1.3, size2*2.2, size2*2.2);
+    ctx.fillRect(x-size2*0.9, y+size2*0.88, size2*0.4, size2*0.4);
+    ctx.fillRect(x+size2*0.5, y+size2*0.88, size2*0.4, size2*0.4);
+
+    // ピンク色の長方形の描画
+    // ctx.fillStyle = "#ff4e72";
+    if(administrator.selected_bus_id === me.id){
+      ctx.fillStyle = "#FF5F76";
+    }else{
+      ctx.fillStyle = "#32A9C2";
+    }
+    ctx.fillRect(x-size2*0.95, y-size2*1.15, size2*1.9, size2*0.4);
+    ctx.fillRect(x-size2*0.95, y-size2*0.6, size2*1.9, size2*0.7);
+    ctx.fillRect(x-size2*0.95, y+size2*0.3, size2*0.4, size2*0.25);
+    ctx.fillRect(x+size2*0.55, y+size2*0.3, size2*0.4, size2*0.25);
   };
 
   window.addEventListener("mousedown", function (e) {
