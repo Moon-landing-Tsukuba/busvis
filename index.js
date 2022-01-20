@@ -34,7 +34,7 @@ document.querySelector(".switch-left-right").addEventListener("click", (event) =
   }
   decide_timetable(administrator);
   administrator.switch = true;
-  console.log(administrator);
+  // console.log(administrator);
   // ajax_func();
 })
 
@@ -47,7 +47,7 @@ document.querySelector(".switch-holiday-weekday").addEventListener("click", (eve
   }
   decide_timetable(administrator);
   administrator.switch = true;
-  console.log(administrator);
+  // console.log(administrator);
 })
 
 const reactions = document.querySelectorAll(".reaction-item");
@@ -84,7 +84,7 @@ document.querySelector(".change-bus-stop").addEventListener("click", (event) => 
   } else {
     administrator.bus_stop_select_mode = false;// alert("bus_stop_select_mode = false");
   }
-  console.log(administrator);
+  // console.log(administrator);
 })
 
 document.querySelector(".change-bus").addEventListener("click", (event) => {
@@ -92,10 +92,10 @@ document.querySelector(".change-bus").addEventListener("click", (event) => {
   // console.log(JSON.parse(JSON.stringify(administrator)));
   if (event.target.classList.contains("on-bus")) {
     administrator.bus_select_mode = true;// alert("bus_select_mode = true");
-    console.log("bus_select_mode = true");
+    // console.log("bus_select_mode = true");
   } else {
     administrator.bus_select_mode = false;// alert("bus_select_mode = false");
-    console.log("bus_select_mode = false");
+    // console.log("bus_select_mode = false");
   }
   // console.log(JSON.parse(JSON.stringify(administrator)));
 })
@@ -168,7 +168,7 @@ for (i = 0; i < bus_stop_num; i++) {
   stops.push(stop);
 }
 
-console.log(cvs.clientWidth);
+// console.log(cvs.clientWidth);
 
 
 
@@ -245,9 +245,9 @@ function Bus(id) {
       if (value.id === me.id || me.id === 100) {
         if (administrator.bus_select_mode){  //バス変更ボタンが押されている＆どこかのバスがクリックされたら切り替え
           if (me.is_clicked) {
-            console.log("bus clicked and my bus ID is " + me.id);
+            // console.log("bus clicked and my bus ID is " + me.id);
             administrator.selected_bus_id = me.id;
-            console.log("selected_bus_id : " +administrator.selected_bus_id);
+            // console.log("selected_bus_id : " +administrator.selected_bus_id);
             administrator.bus_select_mode = false;
             document.querySelector(".change-bus").classList.remove("on-bus");
             // ajax_func();
@@ -564,7 +564,7 @@ function calc_nearest_stop(lat, lng) {
       min_dist_index = i;
     }
   }
-  console.log(min_dist_index);
+  // console.log(min_dist_index);
   return min_dist_index;
 }
 
@@ -638,7 +638,7 @@ function selected_bus_id_initialized(){
       candidate_time.push(value.timetable[userStation]);
     });
 
-    console.log(candidate_time);
+    // console.log(candidate_time);
 
     candidate_time.some(function(value, index){
       if(now > value) count = count + 1;
@@ -650,8 +650,8 @@ function selected_bus_id_initialized(){
       administrator.selected_bus_id = administrator.buses[count].id;
     }
   }
-  console.log("count : " + count);
-  console.log("selectedID : " + administrator.selected_bus_id);
+  // console.log("count : " + count);
+  // console.log("selectedID : " + administrator.selected_bus_id);
 }
 
 function calc_remaining_time(adm){
@@ -671,7 +671,7 @@ function calc_remaining_time(adm){
   if(bus_id == 100){
     arrivalTime = administrator.next_timetable[userStation];
   }else{
-    console.log(timetable);
+    // console.log(timetable);
     arrivalTime = timetable[bus_id][userStation];
   }
 
@@ -770,7 +770,7 @@ function render() {
   }else{
     last_bus_id = -1;
   }
-  console.log(last_bus_id);
+  // console.log(last_bus_id);
   check_table();
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
@@ -784,10 +784,10 @@ function render() {
   } 
   //バスや・バス停が変更された際はselected_bus_idを計算しなおす
   if(administrator.switch){
-    console.log("1 - selected_bus_id : " +administrator.selected_bus_id);
+    // console.log("1 - selected_bus_id : " +administrator.selected_bus_id);
     selected_bus_id_initialized();
     administrator.switch = false;
-    console.log("2 - selected_bus_id : " +administrator.selected_bus_id);
+    // console.log("2 - selected_bus_id : " +administrator.selected_bus_id);
 
   }
 
@@ -876,7 +876,7 @@ calc_pos(administrator);
 selected_bus_id_initialized();
 calc_remaining_time(administrator);
 // ajax_func();
-console.log(administrator);
+// console.log(administrator);
 
 
 let header_height = header_dom.clientHeight;
