@@ -39,7 +39,7 @@ document.querySelector(".switch-left-right").addEventListener("click", (event) =
   decide_timetable(administrator);
   administrator.switch = true;
   // console.log(administrator);
-  // ajax_func();
+  ajax_func();
 })
 
 document.querySelector(".switch-holiday-weekday").addEventListener("click", (event) => {
@@ -255,7 +255,7 @@ function Bus(id) {
             // console.log("selected_bus_id : " +administrator.selected_bus_id);
             administrator.bus_select_mode = false;
             document.querySelector(".change-bus").classList.remove("on-bus");
-            // ajax_func();
+            ajax_func();
           }
         }
       }
@@ -797,7 +797,7 @@ function render() {
   calc_pos(administrator);
   if(administrator.buses.length > 0){
     var next_bus_id = administrator.buses[administrator.buses.length-1].id;
-    // ajax_func();
+    ajax_func();
     if((last_bus_id == -1 || last_bus_id != -1 && last_bus_id != next_bus_id) && administrator.selected_bus_id == 100){
       administrator.selected_bus_id = next_bus_id;
     }
@@ -904,7 +904,7 @@ calc_bus_param(administrator.buses);
 calc_pos(administrator);
 selected_bus_id_initialized();
 calc_remaining_time(administrator);
-// ajax_func();
+ajax_func();
 // console.log(administrator);
 
 
