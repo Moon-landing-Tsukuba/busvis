@@ -738,7 +738,7 @@ function ajax_func(){
         administrator.late_time = req.responseText;
       }
     } else {
-      result.innerHTML = "通信中...";
+      // result.innerHTML = "通信中...";
     }
   } //-----
 }

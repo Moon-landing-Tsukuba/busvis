@@ -67,10 +67,10 @@ $lates = getLate($pdo);
         <header class="page-header wrapper" id='header-id'>
             <div class="inner-box">
                 <div class="font-biggest">
-                    <p id="user-station">第3エリア前</p>
+                    <p id="user-station">つくばセンター</p>
                 </div>
                 <div class="font-departure">
-                    <p id="departure-time">○○分発</p>
+                    <p id="departure-time">　</p>
                 </div>
                 <div class="flex-container">
                     <div id="remaining-time-box">
@@ -78,15 +78,15 @@ $lates = getLate($pdo);
                             <p>次の発車まであと</p>
                         </div> 
                         <div class="font-bigger">
-                            <p id="remaining-time">22分23秒</p>
+                            <p id="remaining-time">　</p>
                         </div>
                     </div>
                     <div id="expected-time-box">
-                        <div class="font-bigger">
-                            <p id="late-time-line"><span id="late-time">4</span>分の遅れ予想</p>
+                        <div class="font-delay">
+                            <p id="late-time-line"><span id="late-time">　</span><span id="late-word"></span></p>
                         </div>
                         <div class="font-smaller">
-                            <p id="expected-time">あと26分23秒</p>
+                            <p id="expected-time">　</p>
                         </div>
                     </div>
                 </div>
@@ -94,11 +94,13 @@ $lates = getLate($pdo);
         </header>
         
         <div class="user-reaction-box" id="user-reaction">
-            <ul>
-                <li class="reaction-item" data-late="0">遅れなし</li>
-                <li class="reaction-item" data-late="2">2分遅れ</li>
-                <li class="reaction-item" data-late="4">4分遅れ</li>
-            </ul>
+            <div id="reaction-items">
+                <ul>
+                    <li class="reaction-item" data-late="0">遅れなし</li>
+                    <li class="reaction-item" data-late="2">2分遅れ</li>
+                    <li class="reaction-item" data-late="4">4分遅れ</li>
+                </ul>
+            </div>
         </div>
 
         <div id="container" class="canvas-box">
@@ -113,7 +115,274 @@ $lates = getLate($pdo);
                 <div class="btn btn-common switch-holiday-weekday weekday"></div>
             </div>
         </div>
-
+        <div class="explanation-wrapp" id="explanation">
+            <div class="explanation">
+                <div class="box7">
+                    <div class="logo-pos">
+                        <img src="img/logo--.png" class="logo-size">
+                    </div>
+                    <p>BusVisは、筑波大学循環バスの遅延情報を確認できるアプリです。</br>
+                        現在地から最寄りのバス停が自動で選択されていますが、「バス停」ボタンを押すと乗りたいバス停を選択することができます。</br>
+                        右回り・左回りを変更したり、平日・休日を変更することができます。</br>
+                        現在時刻に沿ったバスが表示されていて、選択されているバス停までの到着時刻を表示しています。</br>
+                        「バス」ボタンを押すことで、別のバスを選択できます。</br>
+                        バスが時間通りに来ない時、遅延情報を送信するボタンが表示されます。そのボタンがユーザーから押されることで、バスの遅延状況を全ユーザーに反映します。</br></p>
+                </div>
+            </div>
+        </div>
+        <div class="time-tables">
+            <div>
+                <h2 class="time-title">つくばセンター発の時刻表</h2>
+            </div>
+            <div class="table-flex-container">
+                <div class="table-wrapp" id="normal-right">
+                    <p>平日 右回り</p>
+                    <table>
+                        <tr>
+                            <td class="row-head">6</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">15</td>
+                            <td class="table-date">00 20 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">7</td>
+                            <td class="table-date">20 50</td>
+                            <td class="row-head">16</td>
+                            <td class="table-date">00 20 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">8</td>
+                            <td class="table-date">00 10 30 40 50</td>
+                            <td class="row-head">17</td>
+                            <td class="table-date">00 20 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">9</td>
+                            <td class="table-date">10 20 30 50</td>
+                            <td class="row-head">18</td>
+                            <td class="table-date">00 20 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">10</td>
+                            <td class="table-date">00 20 40</td>
+                            <td class="row-head">19</td>
+                            <td class="table-date">00 20 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">11</td>
+                            <td class="table-date">00 20 40</td>
+                            <td class="row-head">20</td>
+                            <td class="table-date">00 20 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">12</td>
+                            <td class="table-date">00 20 40</td>
+                            <td class="row-head">21</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">13</td>
+                            <td class="table-date">00 20 40</td>
+                            <td class="row-head">22</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">14</td>
+                            <td class="table-date">00 20 40</td>
+                            <td class="table-date"> </td>
+                            <td class="table-date"> </td>
+                        </tr>
+                    </table>
+                </div>
+                </br>
+                <div class="table-wrapp" id="normal-left">
+                    <p>平日 左回り</p>
+                    <table>
+                        <tr>
+                            <td class="row-head">6</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">15</td>
+                            <td class="table-date">10 30 50</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">7</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">16</td>
+                            <td class="table-date">10 30 50</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">8</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">17</td>
+                            <td class="table-date">10 30 50</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">9</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">18</td>
+                            <td class="table-date">10 30 50</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">10</td>
+                            <td class="table-date">10 30 50</td>
+                            <td class="row-head">19</td>
+                            <td class="table-date">10 30 50</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">11</td>
+                            <td class="table-date">10 30 50</td>
+                            <td class="row-head">20</td>
+                            <td class="table-date">10 30 50</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">12</td>
+                            <td class="table-date">10 30 50</td>
+                            <td class="row-head">21</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">13</td>
+                            <td class="table-date">10 30 50</td>
+                            <td class="row-head">22</td>
+                            <td class="table-date">00</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">14</td>
+                            <td class="table-date">10 30 50</td>
+                            <td class="table-date"> </td>
+                            <td class="table-date"> </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </br>
+            <div class="table-flex-container">
+                <div class="table-wrapp" id="normal-right">
+                    <p>休日 右回り</p>
+                    <table>
+                        <tr>
+                            <td class="row-head">6</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">15</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">7</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">16</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">8</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">17</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">9</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">18</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">10</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">19</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">11</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">20</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">12</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">21</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">13</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">22</td>
+                            <td class="table-date">00</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">14</td>
+                            <td class="table-date">00 40</td>
+                            <td class="table-date"> </td>
+                            <td class="table-date"> </td>
+                        </tr>
+                    </table>
+                </div>
+                </br>
+                <div class="table-wrapp" id="normal-left">
+                    <p>休日 左回り</p>
+                    <table>
+                        <tr>
+                            <td class="row-head">6</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">15</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">7</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">16</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">8</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">17</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">9</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">18</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">10</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">19</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">11</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">20</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">12</td>
+                            <td class="table-date">20</td>
+                            <td class="row-head">21</td>
+                            <td class="table-date">00 40</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">13</td>
+                            <td class="table-date">00 40</td>
+                            <td class="row-head">22</td>
+                            <td class="table-date">20</td>
+                        </tr>
+                        <tr>
+                            <td class="row-head">14</td>
+                            <td class="table-date">20</td>
+                            <td class="table-date"> </td>
+                            <td class="table-date"> </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="logo-wrapp">
+                <img src="img/big_logo.png" class="big_logo_size">
+            </div>
+        </div>
         <script src="./timetable_list.js"></script>
         <script src="./index.js"></script>
     </body>
