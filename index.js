@@ -111,6 +111,7 @@ let user_station_dom = document.getElementById('user-station');
 let departure_time_dom = document.getElementById('departure-time');
 let remaining_time_dom = document.getElementById('remaining-time');
 let late_time_dom = document.getElementById('late-time');
+let late_word_dom = document.getElementById('late-word');
 let expected_time_dom = document.getElementById('expected-time');
 let header_dom = document.getElementById('header-id');
 
@@ -857,9 +858,11 @@ function render() {
     let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
     late_time_dom.innerHTML = administrator.late_time;
     expected_time_dom.innerText = expected_remaining_time;
+    late_word_dom.innerHTML = "分の遅れ予想";
   }else{
     late_time_dom.innerHTML = "-"
     expected_time_dom.innerText = "---"
+    late_word_dom.innerHTML = " "
   }
 
   //運行中のバスを描画

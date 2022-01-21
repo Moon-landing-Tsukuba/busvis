@@ -302,7 +302,64 @@
   margin: 0; 
   padding: 0;
 }
+/* 説明文
+----------------------------------------------- */
 
+/* つくばセンター発の時刻表
+----------------------------------------------- */
+.time-title {
+  font-family: Arial;
+  text-align: center;
+  color: #32a9c2;
+}
+
+.table-wrapp {
+  font-family: Arial;
+  padding-left: 10%;
+  padding-right: 10%;
+  text-align: center;
+  color: #666;
+}
+@media(min-width:751px){
+  .table-flex-container {
+    /* background-color: #dfdfdf;*/
+    padding: 3% 20%;
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-around;
+  }
+}
+@media(max-width:750px){
+ 
+}
+/*テーブル全体*/
+table {
+  display: flex;
+  align-items: center;
+  justify-content: center;     /* テーブル全体を中央寄せ */
+  /* width: 800px;              テーブルの幅を指定 */
+  text-align: center;        /* セルを中央寄せ */
+  border-collapse: collapse; /* セルの境界線を空けない */
+ 
+}
+
+td,th {
+  border: 2px solid #32a9c2;   /*セル内の線*/
+  padding: 0.3em 0.5em;
+}
+
+.row-head {
+	border-bottom: 2px solid #32a9c2;
+	background-color: whitesmoke;
+}
+
+/* つくばセンター発時刻表
+----------------------------------------------- */
+
+/* ロゴ
+----------------------------------------------- */
 .logo-wrapp {
   display: flex;
   align-items: center;
@@ -313,10 +370,8 @@
   /* padding-bottom: 30%; */
   padding-bottom: 100px;
 }
-
-/* 説明文
+/* ロゴ
 ----------------------------------------------- */
-
 
 /* デスクトップ用
 ----------------------------------------------- */
