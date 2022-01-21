@@ -932,7 +932,7 @@ render();
 
 setInterval(render, 50);
 
-navigator.geolocation.watchPosition((position) => {
+const watchId = navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得
   var lng = position.coords.longitude;           // 経度を取得
   administrator.user_station = calc_nearest_stop(lat, lng);
@@ -941,6 +941,7 @@ navigator.geolocation.watchPosition((position) => {
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
 });
+navigator.geolocation.clearWatch(watchId) ;
 
 window.onresize = function(){
   top_infos_margin = container.clientHeight;
