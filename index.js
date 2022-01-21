@@ -12,6 +12,7 @@ const administrator = {
   correct_holiday : false,
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
+  is_bus_stop_selected : false, //バスが一度でも選択されたことがあるかどうか
   selected_bus_id : 100, //選択されているバスのID
   previous_bus : 0, //headerが出ているときに選択されているバスのID
   next_bus : null, //待機中のバスインスタンス
@@ -379,6 +380,7 @@ function Stop(id) {
       if (me.is_clicked) {
         administrator.user_station = me.id;
         administrator.bus_stop_select_mode = false;
+        administrator.is_bus_stop_selected = true;
         document.querySelector(".change-bus-stop").classList.remove("on-stop");
       }
     }
@@ -576,7 +578,6 @@ function calc_nearest_stop(lat, lng) {
     }
   }
   // console.log(min_dist_index);
-  navigator.geolocation.clearWatch(watchId); // 現在地反映は更新毎に一度だけ
   return min_dist_index;
 }
 
@@ -936,11 +937,13 @@ render();
 
 setInterval(render, 50);
 
-const watchId = navigator.geolocation.watchPosition((position) => {
+navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得
   var lng = position.coords.longitude;           // 経度を取得
-  administrator.user_station = calc_nearest_stop(lat, lng);
-  selected_bus_id_initialized();
+  if (!administrator.is_bus_stop_selected) {
+    administrator.user_station = calc_nearest_stop(lat, lng);
+    selected_bus_id_initialized();
+  }
 }, (error) => {                                     // エラー処理（今回は特に何もしない）
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
