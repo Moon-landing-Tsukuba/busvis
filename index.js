@@ -576,6 +576,7 @@ function calc_nearest_stop(lat, lng) {
     }
   }
   // console.log(min_dist_index);
+  navigator.geolocation.clearWatch(watchId); // 現在地反映は更新毎に一度だけ
   return min_dist_index;
 }
 
@@ -944,7 +945,6 @@ const watchId = navigator.geolocation.watchPosition((position) => {
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
 });
-navigator.geolocation.clearWatch(watchId) ;
 
 window.onresize = function(){
   top_infos_margin = container.clientHeight;
