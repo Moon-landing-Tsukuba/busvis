@@ -853,7 +853,7 @@ function render() {
   remaining_time_dom.innerText = rem;
   console.log(administrator.remaining_time.slice(0,1));
   //遅延を反映した予想時刻の表示
-  if(administrator.correct_holiday == administrator.holiday && administrator.remaining_time.slice(0,1) != "-"){
+  if(administrator.correct_holiday == administrator.holiday ){
     if(administrator.late_time != 2 && administrator.late_time != 4){
       administrator.late_time = 0;
     }
@@ -861,6 +861,9 @@ function render() {
     let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
     late_time_dom.innerHTML = administrator.late_time;
     expected_time_dom.innerText = expected_remaining_time;
+    if(administrator.remaining_time.slice(0,1) == "-"){
+      expected_time_dom.innerText = "  ";
+    }
     late_word_dom.innerHTML = "分の遅れ予想";
   }else{
     late_time_dom.innerHTML = "-"
