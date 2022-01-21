@@ -851,9 +851,9 @@ function render() {
   ctx.font = "italic bold 5pt sans-serif";
   const rem = administrator.remaining_time
   remaining_time_dom.innerText = rem;
-
+  console.log(administrator.remaining_time.slice(0,1));
   //遅延を反映した予想時刻の表示
-  if(administrator.correct_holiday == administrator.holiday){
+  if(administrator.correct_holiday == administrator.holiday && administrator.remaining_time.slice(0,1) != "-"){
     let late_min = administrator.remaining_min + administrator.late_time;
     let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
     late_time_dom.innerHTML = administrator.late_time;
