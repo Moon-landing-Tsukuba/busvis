@@ -857,7 +857,7 @@ function render() {
     if(administrator.late_time != 2 && administrator.late_time != 4){
       administrator.late_time = 0;
     }
-    let late_min = administrator.remaining_min + administrator.late_time;
+    let late_min = Number(administrator.remaining_min) + Number(administrator.late_time);
     let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
     late_time_dom.innerHTML = administrator.late_time;
     expected_time_dom.innerText = expected_remaining_time;
