@@ -246,7 +246,7 @@ function Bus(id) {
     ctx.fillRect(x+size2*0.55, y+size2*0.3, size2*0.4, size2*0.25);
   };
 
-  window.addEventListener("mousedown", function (e) {
+  window.addEventListener("click", function (e) {
     var dx = me.position_x - e.layerX;
     var dy = me.position_y - e.layerY;
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
@@ -371,7 +371,7 @@ function Stop(id) {
     }
   };
   
-  window.addEventListener("mousedown", function (e) {
+  window.addEventListener("click", function (e) {
     var dx = x - e.layerX;
     var dy = y - e.layerY;
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
