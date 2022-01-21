@@ -21,7 +21,7 @@ const administrator = {
   remaining_sec : 0,
   switch : false,
   departure_time : 600000, //選択されているバス停を選択されているバスが出発する時刻
-  late_time : 2, //遅延時間
+  late_time : 0, //遅延時間
   remaining_min : 0,
   remaining_sec : 0,
 };
@@ -854,6 +854,9 @@ function render() {
   console.log(administrator.remaining_time.slice(0,1));
   //遅延を反映した予想時刻の表示
   if(administrator.correct_holiday == administrator.holiday && administrator.remaining_time.slice(0,1) != "-"){
+    if(administrator.late_time != 2 && administrator.late_time != 4){
+      administrator.late_time = 0;
+    }
     let late_min = administrator.remaining_min + administrator.late_time;
     let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
     late_time_dom.innerHTML = administrator.late_time;
