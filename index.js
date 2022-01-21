@@ -841,7 +841,7 @@ function render() {
   //Remaining-Timeの処理
   calc_remaining_time(administrator);
   manage_header(administrator);
-  console.log(administrator);
+  // console.log(administrator);
   
 
 
