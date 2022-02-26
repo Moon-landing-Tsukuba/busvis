@@ -12,6 +12,7 @@ const administrator = {
   correct_holiday : false,
   bus_stop_select_mode : false, //バス停選択時true
   bus_select_mode : false, //バス選択時true
+  is_bus_stop_selected : false, //バスが一度でも選択されたことがあるかどうか
   selected_bus_id : 100, //選択されているバスのID
   previous_bus : 0, //headerが出ているときに選択されているバスのID
   next_bus : null, //待機中のバスインスタンス
@@ -21,7 +22,7 @@ const administrator = {
   remaining_sec : 0,
   switch : false,
   departure_time : 600000, //選択されているバス停を選択されているバスが出発する時刻
-  late_time : 2, //遅延時間
+  late_time : 0, //遅延時間
   remaining_min : 0,
   remaining_sec : 0,
 };
@@ -246,7 +247,7 @@ function Bus(id) {
     ctx.fillRect(x+size2*0.55, y+size2*0.3, size2*0.4, size2*0.25);
   };
 
-  window.addEventListener("mousedown", function (e) {
+  cvs.addEventListener("click", function (e) {
     var dx = me.position_x - e.layerX;
     var dy = me.position_y - e.layerY;
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
@@ -371,7 +372,7 @@ function Stop(id) {
     }
   };
   
-  window.addEventListener("mousedown", function (e) {
+  cvs.addEventListener("click", function (e) {
     var dx = x - e.layerX;
     var dy = y - e.layerY;
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
@@ -379,6 +380,7 @@ function Stop(id) {
       if (me.is_clicked) {
         administrator.user_station = me.id;
         administrator.bus_stop_select_mode = false;
+        administrator.is_bus_stop_selected = true;
         document.querySelector(".change-bus-stop").classList.remove("on-stop");
       }
     }
@@ -851,13 +853,19 @@ function render() {
   ctx.font = "italic bold 5pt sans-serif";
   const rem = administrator.remaining_time
   remaining_time_dom.innerText = rem;
-
+  console.log(administrator.remaining_time.slice(0,1));
   //遅延を反映した予想時刻の表示
-  if(administrator.correct_holiday == administrator.holiday){
-    let late_min = administrator.remaining_min + administrator.late_time;
+  if(administrator.correct_holiday == administrator.holiday ){
+    if(administrator.late_time != 2 && administrator.late_time != 4){
+      administrator.late_time = 0;
+    }
+    let late_min = Number(administrator.remaining_min) + Number(administrator.late_time);
     let expected_remaining_time = late_min + "分" + administrator.remaining_sec + "秒";
     late_time_dom.innerHTML = administrator.late_time;
     expected_time_dom.innerText = expected_remaining_time;
+    if(administrator.remaining_time.slice(0,1) == "-"){
+      expected_time_dom.innerText = "  ";
+    }
     late_word_dom.innerHTML = "分の遅れ予想";
   }else{
     late_time_dom.innerHTML = "-"
@@ -932,8 +940,10 @@ setInterval(render, 50);
 navigator.geolocation.watchPosition((position) => {
   var lat = position.coords.latitude;            // 緯度を取得
   var lng = position.coords.longitude;           // 経度を取得
-  administrator.user_station = calc_nearest_stop(lat, lng);
-  selected_bus_id_initialized();
+  if (!administrator.is_bus_stop_selected) {
+    administrator.user_station = calc_nearest_stop(lat, lng);
+    selected_bus_id_initialized();
+  }
 }, (error) => {                                     // エラー処理（今回は特に何もしない）
 }, {
   enableHighAccuracy: true                        // 高精度で測定するオプション
