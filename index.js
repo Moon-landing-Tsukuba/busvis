@@ -82,16 +82,6 @@ reactions.forEach(reaction => {
   });
 })
 
-// document.querySelector(".change-bus-stop").addEventListener("click", (event) => {
-//   event.target.classList.toggle("on-stop")
-//   if (event.target.classList.contains("on-stop")) {
-//     administrator.bus_stop_select_mode = true;// alert("bus_stop_select_mode = true");
-//   } else {
-//     administrator.bus_stop_select_mode = false;// alert("bus_stop_select_mode = false");
-//   }
-//   // console.log(administrator);
-// })
-
 document.querySelector(".change-bus").addEventListener("click", (event) => {
   event.target.classList.toggle("on-bus")
   // console.log(JSON.parse(JSON.stringify(administrator)));
