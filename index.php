@@ -110,7 +110,7 @@ $lates = getLate($pdo);
         <div class="btn-box wrapper">
             <div class="btn-container">
                 <div class="btn btn-common switch-left-right on"></div>
-                <div class="btn btn2 change-bus-stop"></div> <!--バス停を変更するボタン-->
+                <!-- <div class="btn btn2 change-bus-stop"></div> バス停を変更するボタン -->
                 <div class="btn btn2 change-bus"></div> <!--バスを変更するボタン-->
                 <div class="btn btn-common switch-holiday-weekday weekday"></div>
             </div>

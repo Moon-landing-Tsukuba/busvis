@@ -237,19 +237,19 @@
   color: #383838;
 }
 
-.change-bus-stop::before{
+/* .change-bus-stop::before{
   margin-left: 11%;
   margin-top: 8%;
   font-size: 15px;
   content: "バス停";
   color: #fff;
-}
+} */
 
 .change-bus::before{
-  content: "バス";
+  content: "バス変更";
   font-size: 15px;
   margin-top: 8%;
-  left: 27.8%;
+  /* left: 27.8%; */
   color: #fff;
 }
 
