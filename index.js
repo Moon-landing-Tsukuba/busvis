@@ -82,15 +82,15 @@ reactions.forEach(reaction => {
   });
 })
 
-document.querySelector(".change-bus-stop").addEventListener("click", (event) => {
-  event.target.classList.toggle("on-stop")
-  if (event.target.classList.contains("on-stop")) {
-    administrator.bus_stop_select_mode = true;// alert("bus_stop_select_mode = true");
-  } else {
-    administrator.bus_stop_select_mode = false;// alert("bus_stop_select_mode = false");
-  }
-  // console.log(administrator);
-})
+// document.querySelector(".change-bus-stop").addEventListener("click", (event) => {
+//   event.target.classList.toggle("on-stop")
+//   if (event.target.classList.contains("on-stop")) {
+//     administrator.bus_stop_select_mode = true;// alert("bus_stop_select_mode = true");
+//   } else {
+//     administrator.bus_stop_select_mode = false;// alert("bus_stop_select_mode = false");
+//   }
+//   // console.log(administrator);
+// })
 
 document.querySelector(".change-bus").addEventListener("click", (event) => {
   event.target.classList.toggle("on-bus")
@@ -277,7 +277,7 @@ function Stop(id) {
   this.remaining_time = 0;
   this.is_clicked = false;
   this.name = bus_stop_names[id];
-  this.change_color = "#32A9C2"; //バス停変更ボタンが押された場合の色
+  // this.change_color = "#32A9C2"; //バス停変更ボタンが押された場合の色
   this.selected_color = "#FF5F76"; //ユーザーが選択しているバス停の色
   this.default_color = "#fff"; //デフォルトのバス停の色
   this.stroke_color = "#32A9C2"; //バス停のstrokeStyleの色
@@ -287,12 +287,13 @@ function Stop(id) {
     me.size = w / 30;
     ctx.lineWidth = w / 150;
     ctx.beginPath();
-    if(administrator.bus_stop_select_mode){ //バス停選択ボタンが押されている場合、バス停の色を変える。
-      ctx.fillStyle = me.change_color;
-      if (administrator.user_station === id) {
-        ctx.fillStyle = me.selected_color;
-      }
-    }else{
+    // if(!administrator.bus_select_mode){ //バス選択ボタンが押されていない場合、バス停の色を変える。
+    //   ctx.fillStyle = me.change_color;
+    //   if (administrator.user_station === id) {
+    //     ctx.fillStyle = me.selected_color;
+    //   }
+    // }else{
+    if (true) { // バス停変更ボタンが押された時の色はない
       if (administrator.user_station === id) {
         ctx.fillStyle = me.selected_color;
       } else {
@@ -376,12 +377,12 @@ function Stop(id) {
     var dx = x - e.layerX;
     var dy = y - e.layerY;
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
-    if(administrator.bus_stop_select_mode){  //バス停変更ボタンが押されている＆どこかのバス停がクリックされたら切り替え
+    if(!administrator.bus_select_mode){  //バス変更ボタンが押されていない＆どこかのバス停がクリックされたら切り替え
       if (me.is_clicked) {
         administrator.user_station = me.id;
-        administrator.bus_stop_select_mode = false;
+        // administrator.bus_stop_select_mode = false;
         administrator.is_bus_stop_selected = true;
-        document.querySelector(".change-bus-stop").classList.remove("on-stop");
+        // document.querySelector(".change-bus-stop").classList.remove("on-stop");
       }
     }
   });
@@ -774,7 +775,7 @@ function render() {
   ctx.clearRect(0, 0, w, h);
 
   //map
-  if(!administrator.bus_stop_select_mode){
+  if (true) { // if(!administrator.bus_stop_select_mode){
     const left_bottom_pos = bus_stop_positions[0];
     const left_top_pos = bus_stop_positions[10];
     const right_bottom_pos = bus_stop_positions[14];
