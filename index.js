@@ -80,7 +80,6 @@ reactions.forEach(reaction => {
         })
       });
     }
-    alert("id : " + id + " - direction : " + direction + " - latetime : " + late);
   });
 })
 
