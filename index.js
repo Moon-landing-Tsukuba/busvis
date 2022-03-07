@@ -6,7 +6,7 @@
 
 const administrator = {
   direction: true, //右回りならTrue
-  user_station: 0, //バス停の識別IDが入る
+  user_station: 14, //バス停の識別IDが入る
   previous_station : 0, //headerが出ているときに選択されているバスのID
   target_table: [],
   buses: [],
@@ -828,7 +828,7 @@ function render() {
   }
 
   //ユーザーのいるバス停を表示
-  user_station_dom.innerText = bus_stop_names[administrator.user_station];
+  user_station_dom.innerText = bus_stop_names[administrator.user_station].replace(/\r?\n/g,"");
 
   //出発時刻を表示
   departure_time_dom.innerText = administrator.departure_time + " 発";
