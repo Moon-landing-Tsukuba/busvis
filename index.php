@@ -62,6 +62,9 @@ $lates = getLate($pdo);
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>BusVis</title>
         <link rel="stylesheet" href="style.css">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Cache-Control" content="no-cache">
+        <meta http-equiv="Expires" content="0">
     </head>
     <body>
         <header class="page-header wrapper" id='header-id'>
