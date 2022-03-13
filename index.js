@@ -27,6 +27,7 @@ const administrator = {
   late_time : 0, //遅延時間
   remaining_min : 0,
   remaining_sec : 0,
+  is_popup : false,
 };
 
 /*-------------------------------------------
@@ -61,6 +62,7 @@ document.querySelector(".reaction").addEventListener("click", (event) => {
     let container = document.getElementById("js-popup");
     container.style.opacity = 1;
     container.style.visibility ="visible";
+    administrator.is_popup = true;
 })
 
 let blackBg = document.getElementById('js-black-bg');
@@ -74,37 +76,41 @@ function closePopUp(elem) {
     let container = document.getElementById("js-popup");
     container.style.opacity = 0;
     container.style.visibility ="hidden";
+    administrator.is_popup = false;
   });
 }
 
 
 
-
-const reactions = document.querySelectorAll(".reaction-item");
-reactions.forEach(reaction => {
-  reaction.addEventListener("click", () => {
-    let late = reaction.dataset.late;
-    let id = administrator.selected_bus_id + 1;
-    let direction;
-    if (administrator.direction) {
-      direction = 'rights';
-    } else {
-      direction = 'lefts';
-    }
-    // alert("late : " + late + " - id : " + id + " - direction : " + direction);
-
-    if(administrator.correct_holiday == administrator.holiday){
-      fetch('index.php', {
-        method: 'POST',
-        body: new URLSearchParams({
-          fetchid: id,
-          direct: direction,
-          latetime: late,
-        })
+function popup(){
+  if(administrator.is_popup){
+    const reactions = document.querySelectorAll(".reaction-item");
+    reactions.forEach(reaction => {
+      reaction.addEventListener("click", () => {
+        let late = reaction.dataset.late;
+        let id = administrator.selected_bus_id + 1;
+        let direction;
+        if (administrator.direction) {
+          direction = 'rights';
+        } else {
+          direction = 'lefts';
+        }
+        // alert("late : " + late + " - id : " + id + " - direction : " + direction);
+    
+        if(administrator.correct_holiday == administrator.holiday){
+          fetch('index.php', {
+            method: 'POST',
+            body: new URLSearchParams({
+              fetchid: id,
+              direct: direction,
+              latetime: late,
+            })
+          });
+        }
       });
-    }
-  });
-})
+    })
+  }
+}
 
 document.querySelector(".change-bus").addEventListener("click", (event) => {
   event.target.classList.toggle("on-bus")
@@ -861,6 +867,7 @@ function render() {
   // manage_header(administrator);
   // console.log(administrator);
   
+  popup();
 
 
   
