@@ -61,6 +61,7 @@ $lates = getLate($pdo);
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>BusVis</title>
+        <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
@@ -93,26 +94,35 @@ $lates = getLate($pdo);
             </div> 
         </header>
         
-        <div class="user-reaction-box" id="user-reaction">
-            <div id="reaction-items">
-                <ul>
-                    <li class="reaction-item" data-late="0">遅れなし</li>
-                    <li class="reaction-item" data-late="2">2分遅れ</li>
-                    <li class="reaction-item" data-late="4">4分遅れ</li>
-                </ul>
+        <div class="popup" id="js-popup">
+            <div class="popup-inner">
+                <div class="user-reaction-box" id="user-reaction">
+                    <div id="reaction-items">
+                        <div class="close-btn" id="js-close-btn"><i class="fas fa-times"></i></div>
+                        <ul>
+                            <li class="reaction-item" data-late="0">遅れなし</li>
+                            <li class="reaction-item" data-late="2">2分遅れ</li>
+                            <li class="reaction-item" data-late="4">4分遅れ</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="black-background" id="js-black-bg"></div>
         </div>
 
-        <div id="container" class="canvas-box">
-            <canvas id="bus-map"></canvas>
+        <div id="canvas-wrapper">
+            <div id="container" class="canvas-box">
+                <canvas id="bus-map"></canvas>
+            </div>
         </div>
 
         <div class="btn-box wrapper">
             <div class="btn-container">
+                <div class="btn btn-common switch-holiday-weekday weekday"></div>
                 <div class="btn btn-common switch-left-right on"></div>
                 <!-- <div class="btn btn2 change-bus-stop"></div> バス停を変更するボタン -->
                 <div class="btn btn2 change-bus"></div> <!--バスを変更するボタン-->
-                <div class="btn btn-common switch-holiday-weekday weekday"></div>
+                <div class="btn btn2 reaction"></div> <!--バスを変更するボタン-->
             </div>
         </div>
         <div class="explanation-wrapp" id="explanation">

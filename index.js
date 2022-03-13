@@ -55,7 +55,30 @@ document.querySelector(".switch-holiday-weekday").addEventListener("click", (eve
   decide_timetable(administrator);
   administrator.switch = true;
   // console.log(administrator);
+})    
+
+document.querySelector(".reaction").addEventListener("click", (event) => {
+    let container = document.getElementById("js-popup");
+    container.style.opacity = 1;
+    container.style.visibility ="visible";
 })
+
+let blackBg = document.getElementById('js-black-bg');
+let closeBtn = document.getElementById('js-close-btn');
+
+closePopUp(blackBg);
+closePopUp(closeBtn);
+
+function closePopUp(elem) {
+  elem.addEventListener('click', function() {
+    let container = document.getElementById("js-popup");
+    container.style.opacity = 0;
+    container.style.visibility ="hidden";
+  });
+}
+
+
+
 
 const reactions = document.querySelectorAll(".reaction-item");
 reactions.forEach(reaction => {
@@ -144,13 +167,11 @@ const holiday_list = [
   '2022-11-23',
 ]
 
-var container = document.getElementById("user-reaction");
+let container = document.getElementById("user-reaction");
 var cvs = document.getElementById("bus-map");
 var view_size = is_smart_phone() ? get_screen_size() : get_page_size();
-var top_infos_margin = container.clientHeight;
 const bottom_buttons_margin = 50;
 var w = view_size[0] < 500 ? view_size[0] : 500;
-// var h = view_size[1] - top_infos_margin - bottom_buttons_margin;
 var h = 500;
 cvs.width = w;
 cvs.height = h;
@@ -168,10 +189,12 @@ for (i = 0; i < bus_stop_num; i++) {
 // console.log(cvs.clientWidth);
 
 
-let header_height = header_dom.clientHeight;
-container.style.paddingTop = header_height + 'px';
+//edited by mikio
+// let header_height2 = document.getElementById("canvas-box");
+// let header_height = header_dom.clientHeight;
+// header_height2.style.paddingTop = header_height + 'px';
 
-container.style.visibility = "hidden";
+// container.style.visibility = "hidden";
 
 
 /*-------------------------------------------
@@ -736,32 +759,33 @@ function ajax_func(){
     }
   } //-----
 }
-function manage_header(adm){
-  if(adm.remaining_min == 0 && adm.remaining_sec < 20){
-    container.style.visibility ="visible";
-    container.style.height = null ;
-    adm.previous_station = adm.user_station;
-    adm.previous_bus = adm.selected_bus_id;
-    let canvas_box = document.getElementById('container');
-    let reaction_items_dom = document.getElementById('reaction-items');
-    let reaction_items_height = reaction_items_dom.clientHeight;
-    canvas_box.style.paddingTop = reaction_items_height + "px";
+// function manage_header(adm){
+//   if(adm.remaining_min == 0 && adm.remaining_sec < 20){
+//     container.style.visibility ="visible";
+//     container.style.height = null ;
+//     adm.previous_station = adm.user_station;
+//     adm.previous_bus = adm.selected_bus_id;
+//     let canvas_box = document.getElementById('container');
+//     let reaction_items_dom = document.getElementById('reaction-items');
+//     let reaction_items_height = reaction_items_dom.clientHeight;
+//     canvas_box.style.paddingTop = reaction_items_height + "px";
 
-  }
-  else{  
-    if(adm.previous_station != adm.user_station || adm.previous_bus != adm.selected_bus_id )
-    {
-      container.style.visibility ="hidden";
-      container.style.height = "0";
-      let canvas_box = document.getElementById('container');
-      canvas_box.style.paddingTop = "13px";
-    }
-  }
-}
+//   }
+//   else{  
+//     if(adm.previous_station != adm.user_station || adm.previous_bus != adm.selected_bus_id )
+//     {
+//       container.style.visibility ="hidden";
+//       container.style.height = "0";
+//       let canvas_box = document.getElementById('container');
+//       canvas_box.style.paddingTop = "13px";
+//     }
+//   }
+// }
 
 function render() {
+  let canvas_wrapper = document.getElementById("canvas-wrapper");
   let header_height = header_dom.clientHeight;
-  container.style.paddingTop = header_height + 'px';
+  canvas_wrapper.style.paddingTop = header_height + 'px';
   // console.log(administrator);
   ctx.clearRect(0, 0, w, h);
 
@@ -834,7 +858,7 @@ function render() {
 
   //Remaining-Timeの処理
   calc_remaining_time(administrator);
-  manage_header(administrator);
+  // manage_header(administrator);
   // console.log(administrator);
   
 
@@ -942,10 +966,8 @@ navigator.geolocation.watchPosition((position) => {
 });
 
 window.onresize = function(){
-  top_infos_margin = container.clientHeight;
   view_size = is_smart_phone() ? get_screen_size() : get_page_size();
   w = view_size[0] < 500 ? view_size[0] : 500;
-  // h = view_size[1] - top_infos_margin - bottom_buttons_margin;
   h = 500;
   // console.log(h, top_infos_margin, bottom_buttons_margin);
   cvs.width = w;
