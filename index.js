@@ -268,8 +268,9 @@ function Bus(id) {
   };
 
   cvs.addEventListener("click", function (e) {
-    var dx = me.position_x - e.layerX;
-    var dy = me.position_y - e.layerY;
+    var dx = me.position_x - e.offsetX;
+    var dy = me.position_y - e.offsetY;
+    // console.log(dx, dy, me.position_x, e.layerX, me.position_y, e.layerY);
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
     administrator.buses.forEach(function(value, index) {
       // console.log(JSON.parse(JSON.stringify(value)));
@@ -394,8 +395,9 @@ function Stop(id) {
   };
   
   cvs.addEventListener("click", function (e) {
-    var dx = x - e.layerX;
-    var dy = y - e.layerY;
+    var dx = x - e.offsetX;
+    var dy = y - e.offsetY;
+    // console.log(me.id, dx, dy, x, e.offsetX, y, e.offsetY);
     me.is_clicked = Math.sqrt(dx * dx + dy * dy) < me.size;
     if(!administrator.bus_select_mode){  //バス変更ボタンが押されていない＆どこかのバス停がクリックされたら切り替え
       if (me.is_clicked) {
