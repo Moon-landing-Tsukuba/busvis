@@ -396,9 +396,9 @@ $lates = getLate($pdo);
                 <img src="img/big_logo.png" class="big_logo_size">
             </div>
         </div>
-        <div id="now" display="none"></div>
+        <!-- <div id="now" display="none"></div> -->
         <script src="./timetable_list.js"></script>
         <script src="./index.js"></script>
-        <script src="./cache.js?p=(new Date()).getTime()"></script>
+        <!-- <script src="./cache.js?p=(new Date()).getTime()"></script> -->
     </body>
 </html>
