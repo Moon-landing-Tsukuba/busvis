@@ -1,0 +1,17 @@
+{
+    "name":"BusVis",
+    "short_name":"BusVis",
+    "icons": [{
+        "src": "./img/192px/icon_192-back-blue",
+        "sizes":"192x192",
+        "type": "image/png"
+      }, {
+        "src": "./img/512px/icon_512-back-blue",
+        "sizes":"512x512",
+        "type": "image/png"
+      }],
+    "start_url": "/index.html?utm_source=homescreen",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#FFFFFF"
+  }

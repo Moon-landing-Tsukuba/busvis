@@ -57,6 +57,17 @@ $lates = getLate($pdo);
 
 <!DOCTYPE html>
 <html>
+    <!-- ウェブアプリマニフェストの読み込み -->
+    <link rel="manifest" href="manifest.json">
+    <!-- ServiceWorkerの登録 -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+        .then((reg) => {
+            console.log('Service worker registered.', reg);
+        });
+    }
+    </script>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -66,6 +77,14 @@ $lates = getLate($pdo);
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Cache-Control" content="no-cache">
         <meta http-equiv="Expires" content="0">
+        <!-- アドレスバー等のブラウザのUIを非表示 -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <!-- default（Safariと同じ） / black（黒） / black-translucent（ステータスバーをコンテンツに含める） -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <!-- ホーム画面に表示されるアプリ名 -->
+        <meta name="apple-mobile-web-app-title" content="BusVis">
+        <!-- ホーム画面に表示されるアプリアイコン -->
+        <link rel="apple-touch-icon" href="./img/192px/icon_192-back-blue.png">
     </head>
     <body>
         <header class="page-header wrapper" id='header-id'>
