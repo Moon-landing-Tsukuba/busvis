@@ -523,9 +523,9 @@ function create_buses(tm) {  //tm : administrater.target_table
 function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
   let now = load_now(); // ex)163033
 
-  admin_bus.forEach(function (value, index) {
+  admin_bus.forEach(function (bus, index) {
     const target_ends = [];
-    value.timetable.forEach(function (element) {
+    bus.timetable.forEach(function (element) {
       element = element;
       if (element > now) {
         target_ends.push(element);
@@ -534,7 +534,7 @@ function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
     const target_end = target_ends[0];
 
     let target_start = 0;
-    value.timetable.forEach(function (element) {
+    bus.timetable.forEach(function (element) {
       element = element;
       if (element < target_end) {
         target_start = element;
@@ -542,7 +542,7 @@ function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
     });
 
     let start_stop = 0;
-    value.timetable.some(function (time, index) {
+    bus.timetable.some(function (time, index) {
       if (target_start == time) {
         start_stop = index;
         return true;
@@ -550,17 +550,17 @@ function calc_bus_param(admin_bus) { // admin_bus : administrator.buses
     });
 
     let end_stop = 0;
-    value.timetable.some(function (time, index) {
+    bus.timetable.some(function (time, index) {
       if (target_end == time) {
         end_stop = index;
         return true;
       }
     });
 
-    value.start_stop = start_stop;
-    value.end_stop = end_stop;
-    value.start_time = target_start;
-    value.end_time = target_end;
+    bus.start_stop = start_stop;
+    bus.end_stop = end_stop;
+    bus.start_time = target_start;
+    bus.end_time = target_end;
   });
 }
 
@@ -798,21 +798,19 @@ function render() {
   // console.log(administrator);
   ctx.clearRect(0, 0, w, h);
 
-  //map
+  //道路を描画する処理。
   if (true) { // if(!administrator.bus_stop_select_mode){
     const left_bottom_pos = bus_stop_positions[0];
     const left_top_pos = bus_stop_positions[10];
     const right_bottom_pos = bus_stop_positions[14];
     const right_top_pos = bus_stop_positions[24];
     ctx.lineWidth = w / 40;
-    // ctx.lineWidth = w / 50; //commit#38492300にあった方
+    
     ctx.strokeStyle = "#32A9C2";
     ctx.beginPath();
     ctx.moveTo(left_bottom_pos[0], left_bottom_pos[1]);
     ctx.lineTo(left_top_pos[0], left_top_pos[1]);
-    //ctx.arc(中心座標x, 中心座標y, 半径, 開始角, 終了角, 反時計回りか？); 3時〜12時の位置 ctx.arc(320, 120, 80, 0, 1.5 * Math.PI);
-    //開始角は3時の方角で時計回り
-    // ctx.arc(w/2-h/5+r, h/5, r, Math.PI, 3*Math.PI/2, false);
+
     ctx.lineTo(right_bottom_pos[0], right_bottom_pos[1]);
     ctx.lineTo(right_top_pos[0], right_top_pos[1]);
     ctx.closePath();
@@ -827,10 +825,11 @@ function render() {
   administrator.next_bus.position_y = tmp_y;
   administrator.next_bus.draw(ctx, tmp_x, tmp_y); 
 
-  //停留所インスタンスの生成
+  //バス停インスタンスの描画
   for (var i = 0; i < bus_stop_num; i++) {
     stops[i].draw(ctx);
   }
+
   //待機中のバスが発車した際にそのバスを選択し続ける。
   var last_bus_id;
   if(administrator.buses.length > 0){
@@ -838,11 +837,12 @@ function render() {
   }else{
     last_bus_id = -1;
   }
-  // console.log(last_bus_id);
+
   check_table();
   create_buses(administrator.target_table);
   calc_bus_param(administrator.buses);
   calc_pos(administrator);
+
   if(administrator.buses.length > 0){
     var next_bus_id = administrator.buses[administrator.buses.length-1].id;
     // ajax_func();
@@ -850,6 +850,7 @@ function render() {
       administrator.selected_bus_id = next_bus_id;
     }
   } 
+
   //バスや・バス停が変更された際はselected_bus_idを計算しなおす
   if(administrator.switch){
     // console.log("1 - selected_bus_id : " +administrator.selected_bus_id);
@@ -880,6 +881,7 @@ function render() {
   const rem = administrator.remaining_time
   remaining_time_dom.innerText = rem;
   console.log(administrator.remaining_time.slice(0,1));
+  
   //遅延を反映した予想時刻の表示
   if(administrator.correct_holiday == administrator.holiday ){
     if(administrator.late_time != 2 && administrator.late_time != 4){
